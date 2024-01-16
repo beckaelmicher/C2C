@@ -8,6 +8,7 @@ def main():
     
     
     
+    
      
 class BaseCar(FrontWheels, BackWheels):
     
@@ -16,8 +17,9 @@ class BaseCar(FrontWheels, BackWheels):
         Args:
             turning_offset (int): Offset used to calculate the angle. Defaults to 0.
         """
-        self._steering_angle = 90
-        self._speed = 0
+        self._steering_angle = 90    
+        self._own_speed = 30
+        self.forward()
         self._direction = 0 #(1 vorwärts?, -1 rückwärts)
         
         
@@ -40,13 +42,13 @@ class BaseCar(FrontWheels, BackWheels):
     
     
     @property    
-    def speed(self):
-        return self._speed
+    def own_speed(self):
+        return self.speed
     
-    @speed.setter
-    def speed(self, speed:int):
+    @own_speed.setter
+    def own_speed(self, speed:int):
         print("Ich bin der Speed-Setter")
-        self._speed = speed
+        self._own_speed = speed
         
     def drive(self, speed, direction):
         pass
