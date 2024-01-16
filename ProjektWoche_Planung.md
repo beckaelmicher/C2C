@@ -3,10 +3,10 @@
 
 Datei: basecar.py mit Class BaseCar erbt von FrontWheels, BackWheels
 
-• steering_angle: Setzen und Zugriff auf den Lenkwinkel (Property mit Setter) 
-• speed: Setzen und Zugriff auf die Geschwindigkeit (Property mit Setter) 
-• direction: Zugriff auf die Fahrrichtung (1: vorwärts, 0: Stillstand, ‑1 Rückwärts) (Property ohne Setter) 
-• drive(speed:int, direction:int): Methode zum Setzen von Geschwindigkeit und Fahrrichtung 
+• steering_angle: Setzen und Zugriff auf den Lenkwinkel (Property mit Setter)
+• speed: Setzen und Zugriff auf die Geschwindigkeit (Property mit Setter)
+• direction: Zugriff auf die Fahrrichtung (1: vorwärts, 0: Stillstand, ‑1 Rückwärts) (Property ohne Setter)
+• drive(speed:int, direction:int): Methode zum Setzen von Geschwindigkeit und Fahrrichtung
 • stop: Methode zum Anhalten des Autos. Sie setzt die Geschwindigkeit auf Null und den Lenkwinkel auf Geradeaus.
 
 Prüfen Sie, ob die Properties steering_angle, speed und direction immer die korrekten Werte liefern. Dies muss unabhängig von der Verwendungsgeschichte einer korrekten Instanz gewährleistet sein. Die Klasse BaseCar soll mittels der folgenden Aufgaben getestet werden.
