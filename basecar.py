@@ -1,4 +1,4 @@
-from basisklassen import FrontWheels, BackWheels
+from basisklassen import *
 import click
 import time
 import json
