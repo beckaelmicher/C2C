@@ -128,7 +128,7 @@ def main(modus):
                 "Speed": list_speed,
                 "Direction": list_direction,
                 "SteeringAngle": list_steeringangle,
-                "Disctance": list_distance
+                "Distance": list_distance
             })
             messergebnisse.to_csv(csv_dateipfad, index=False)
 
