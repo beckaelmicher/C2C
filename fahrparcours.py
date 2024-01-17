@@ -1,4 +1,5 @@
 from basecar import *
+from soniccar import *
 import click
 import time
 
@@ -16,8 +17,8 @@ def main(modus):
         0: 'Ausrichtung der Servo der Lenkung auf Geradeaus',
         1: 'Fahrparcours 1 - Vorwärts und Rückwärts',
         2: 'Fahrparcours 2 - Kreisfahrt mit maximalem Lenkwinkel',
-        # 3: 'Test Ultraschallmodul / Klasse: Ultrasonic',
-        # 4: 'Test Infrarotmodul / Klasse: Infrared',
+        3: 'Fahrparcours 3 - Vorwärtsfahrt bis Hindernis',
+        4: 'Fahrparcous 4 - Erkundungstour',
         # 5: 'Test Hinter- und Vorderräder unter Verwendung der Konfigurationen in config.json',
     }
 
@@ -95,8 +96,33 @@ def main(modus):
             print("Ende des Parcours.")
         else:
             print('Abbruch.')
-        
+    if modus == 3:
+        x = input('ACHTUNG! Das Auto fährt vorwärts bis zum ersten Hindernis!\n Drücken Sie ENTER zum Start.')
+        if x == '':
+            print('Fahrparcours 3')
+            sc = SonicCar()
+            no_obstacle = True
+            while no_obstacle:
+                if sc.abstand()>5:
+                    sc.drive(30, 1)
+                else:
+                    no_obstacle = False
+                    sc.stop()
 
+            sc.stop()   
+            print("Ende des Parcours.")
+        else:
+            print('Abbruch.')
+
+    if modus == 4:
+        x = input('ACHTUNG! Das Auto bewegt sich eigenständig durch den Raum!\n Drücken Sie ENTER zum Start.')
+        if x == '':
+            print('Fahrparcours 4')
+            sc = SonicCar()
+            
+            print("Ende des Parcours.")
+        else:
+            print('Abbruch.')
 
 if __name__ == '__main__':
     main()
