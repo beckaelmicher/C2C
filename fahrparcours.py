@@ -102,9 +102,10 @@ def main(modus):
             print('Fahrparcours 3')
             sc = SonicCar()
             no_obstacle = True
+            sc.steering_angle = 90
             while no_obstacle:
                 print(sc.abstand)
-                if sc.abstand > 5 or  sc.abstand < 0:
+                if sc.abstand > 10 or  sc.abstand < 0:
                     sc.drive(30, 1)
                 else:
                     no_obstacle = False
