@@ -88,7 +88,7 @@ def main(modus):
     Args:
         modus (int): The mode that can be choosen by the user
     """
-    print('-- DEMO BASISKLASSEN--------------------')
+    print('-- Auswahl der Fahrfunktionen --------------------')
     modi = {
         0: 'Ausrichtung der Servo der Lenkung auf Geradeaus',
         1: 'Fahrparcours 1 - Vorwärts und Rückwärts',
@@ -159,15 +159,26 @@ def main(modus):
             if x == '':
                 print('Fahrparcours 2')
                 bc = BaseCar()
-                bc.fw.turn(90)
+                bc.steering_angle = 90
                 bc.drive(30, 1)
                 time.sleep(1)
-                bc.fw.turn(45)
+                bc.steering_angle = 135
                 time.sleep(8)
                 bc.drive(0, 0)
                 bc.drive(30, -1)
                 time.sleep(8)
-                bc.fw.turn(90)
+                bc.steering_angle = 90
+                time.sleep(1)
+                bc.drive(0, 0)
+                time.sleep(.5)
+                bc.drive(30, 1)
+                time.sleep(1)
+                bc.steering_angle = 45
+                time.sleep(8)
+                bc.drive(0, 0)
+                bc.drive(30, -1)
+                time.sleep(8)
+                bc.steering_angle = 90
                 time.sleep(1)
                 bc.drive(0, 0)
                 print("Ende des Parcours.")
