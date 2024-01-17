@@ -103,7 +103,7 @@ def main(modus):
             sc = SonicCar()
             no_obstacle = True
             while no_obstacle:
-                if sc.abstand()>5:
+                if sc.abstand > 5:
                     sc.drive(30, 1)
                 else:
                     no_obstacle = False
@@ -114,12 +114,12 @@ def main(modus):
         else:
             print('Abbruch.')
 
-    if modus == 4:
+    if modus == 4: 
         x = input('ACHTUNG! Das Auto bewegt sich eigenständig durch den Raum!\n Drücken Sie ENTER zum Start.')
         if x == '':
             print('Fahrparcours 4')
             sc = SonicCar()
-            
+                # tbd!
             print("Ende des Parcours.")
         else:
             print('Abbruch.')

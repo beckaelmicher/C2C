@@ -99,6 +99,11 @@ class BaseCar(object):
         else:
             print("Ungültige Fahrtrichtungsangabe")
     
+    def stop(self):
+        """Methode zum Stoppen
+        
+        """
+        self.bw.stop()
 
 
 #### Main ####
