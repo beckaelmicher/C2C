@@ -11,7 +11,7 @@
 
 import click
 import time
-import numpy as nppberry
+import numpy as np
 import math
 import RPi.GPIO as GPIO
 import smbus

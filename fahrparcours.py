@@ -103,10 +103,13 @@ def main(modus):
             sc = SonicCar()
             no_obstacle = True
             while no_obstacle:
-                if sc.abstand > 5:
+                print(sc.abstand)
+                if sc.abstand > 5 or  sc.abstand < 0:
                     sc.drive(30, 1)
                 else:
                     no_obstacle = False
+                    print("Hindernis")
+                    print(sc.abstand)
                     sc.stop()
 
             sc.stop()   
