@@ -8,6 +8,7 @@ class BaseCar(object):
     
     """
     def __init__(self) -> None:
+
             # try:
             #     with open("config.json", "r") as f:
             #         data = json.load(f)
@@ -25,6 +26,7 @@ class BaseCar(object):
         self.steering_angle = 90
         self.speed = 0
         self._direction = 0
+
     
     @property
     def steering_angle(self):
