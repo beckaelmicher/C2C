@@ -9,22 +9,22 @@ class BaseCar(object):
     """
     def __init__(self) -> None:
 
-            # try:
-            #     with open("config.json", "r") as f:
-            #         data = json.load(f)
-            #         turning_offset = data["turning_offset"]
-            #         forward_A = data["forward_A"]
-            #         forward_B = data["forward_B"]
-            #         print("Daten in config.json:")
-            #         print(" - Turning Offset: ", turning_offset)
-            #         print(" - Forward A: ", forward_A)
-            #         print(" - Forward B: ", forward_B)
-            # except:
-            #     print("Keine geeignete Datei config.json gefunden!")
-        self.fw = FrontWheels() # turning_offset übergeben zur Justierung des Lenkeinschlags?
+        try:
+            with open("config.json", "r") as f:
+                data = json.load(f)
+                turning_offset = data["turning_offset"]
+                forward_A = data["forward_A"]
+                forward_B = data["forward_B"]
+                print("Daten in config.json:")
+                print(" - Turning Offset: ", turning_offset)
+                print(" - Forward A: ", forward_A)
+                print(" - Forward B: ", forward_B)
+        except:
+            print("Keine geeignete Datei config.json gefunden!")
+        self.fw = FrontWheels(turning_offset=turning_offset) # turning_offset übergeben zur Justierung des Lenkeinschlags?
         self.bw = BackWheels()
         self.steering_angle = 90
-        self.speed = 0
+        self.speed = 00000
         self._direction = 0
 
     
