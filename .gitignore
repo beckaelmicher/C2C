@@ -1,5 +1,6 @@
 # Own files to exclude
 config.json
+messergebnisse.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

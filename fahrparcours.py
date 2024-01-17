@@ -2,6 +2,7 @@ from basecar import *
 from soniccar import *
 import click
 import time
+import pandas as pd
 
 @click.command()
 @click.option('--modus', '--m', type=int, default=None, help="Startet Test für Klasse direkt.")
@@ -103,8 +104,18 @@ def main(modus):
             sc = SonicCar()
             no_obstacle = True
             sc.steering_angle = 90
+            list_speed = []
+            list_direction = []
+            list_steeringangle = []
+            list_distance = []
+            
             while no_obstacle:
-                print(sc.abstand)
+                csv_dateipfad = 'messergebnisse.csv'
+                list_speed.append(sc.speed)
+                list_direction.append(sc.direction)
+                list_steeringangle.append(sc.steering_angle)
+                list_distance.append(sc.abstand)
+                # print(sc.abstand)
                 if sc.abstand > 10 or  sc.abstand < 0:
                     sc.drive(30, 1)
                 else:
@@ -112,6 +123,14 @@ def main(modus):
                     print("Hindernis")
                     print(sc.abstand)
                     sc.stop()
+
+            messergebnisse = pd.DataFrame({
+                "Speed": list_speed,
+                "Direction": list_direction,
+                "SteeringAngle": list_steeringangle,
+                "Disctance": list_distance
+            })
+            messergebnisse.to_csv(csv_dateipfad, index=False)
 
             sc.stop()   
             print("Ende des Parcours.")
