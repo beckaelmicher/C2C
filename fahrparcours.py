@@ -156,7 +156,8 @@ def main(modus):
                     modus = None
     except KeyboardInterrupt:
         print("\nProgramm abgebrochen!")
-        sc.stop() 
+        bc.stop()   # Fahrzeug anhalten
+        bc.steering_angle = 90  # Lenkung gerade ausrichten
 
 
 if __name__ == '__main__':
