@@ -16,6 +16,47 @@ def main(modus):
     """
     bc = BaseCar()
     sc = SonicCar()
+
+    # Messergebnis und Listen ausgelagert, damit per Methode aufrufbar wird.
+    messergebnis = 0
+    list_time = []
+    list_time_delta = []
+    list_speed = []
+    list_direction = []
+    list_steeringangle = []
+    list_distance = []
+    time_alt = dt.now()
+    time_alt = time_alt.timestamp()
+    
+    def recording_panda_lists(self):
+        self.csv_dateipfad = 'messergebnisse.csv'
+        time = dt.now()
+        time = time.timestamp()
+        time_diff = time-time_alt
+        list_time.append(dt.now().strftime("%H:%M:%S.%f")[:11])
+        #time_alt = dt.now()
+        list_time_delta.append(round(time_diff, 5))
+        list_speed.append(sc.speed)
+        list_direction.append(sc.direction)
+        list_steeringangle.append(sc.steering_angle)
+        list_distance.append(sc.abstand)
+
+    def list_2_csv(self):
+        messergebnisse = pd.DataFrame({
+            "Timestamp": list_time,
+            "timedelta": list_time_delta,
+            "Speed": list_speed,
+            "Direction": list_direction,
+            "SteeringAngle": list_steeringangle,
+            "Distance": list_distance
+        })
+        if messergebnis == 0:
+            messergebnisse.to_csv(self.csv_dateipfad, index=False)    
+            messergebnis = 1
+        else:
+            messergebnisse.to_csv(self.csv_dateipfad, index=False, mode="a", header=False)
+
+
     try:
         while True:
             print('-- Auswahl der Fahrfunktionen --------------------')
@@ -27,7 +68,7 @@ def main(modus):
                 4: 'Fahrparcous 4 - Erkundungstour',
                 # 5: 'Test Hinter- und Vorderräder unter Verwendung der Konfigurationen in config.json',
             }
-
+            
             if modus == None:
                 print('--' * 20)
                 print('Auswahl:')
@@ -109,27 +150,9 @@ def main(modus):
                     print('Fahrparcours 3')
                     no_obstacle = True
                     sc.steering_angle = 90
-                    list_time = []
-                    list_time_delta = []
-                    list_speed = []
-                    list_direction = []
-                    list_steeringangle = []
-                    list_distance = []
-                    time_alt = dt.now()
-                    time_alt = time_alt.timestamp()
 
                     while no_obstacle:
-                        csv_dateipfad = 'messergebnisse.csv'
-                        time = dt.now()
-                        time = time.timestamp()
-                        time_diff = time-time_alt
-                        list_time.append(dt.now().strftime("%H:%M:%S.%f")[:11])
-                        #time_alt = dt.now()
-                        list_time_delta.append(round(time_diff, 5))
-                        list_speed.append(sc.speed)
-                        list_direction.append(sc.direction)
-                        list_steeringangle.append(sc.steering_angle)
-                        list_distance.append(sc.abstand)
+                        
                         # print(sc.abstand)
                         if sc.abstand > 10 or  sc.abstand < 0:
                             sc.drive(30, 1)
@@ -138,16 +161,9 @@ def main(modus):
                             print("Hindernis")
                             print(sc.abstand)
                             sc.stop()
-
-                    messergebnisse = pd.DataFrame({
-                        "Timestamp": list_time,
-                        "timedelta": list_time_delta,
-                        "Speed": list_speed,
-                        "Direction": list_direction,
-                        "SteeringAngle": list_steeringangle,
-                        "Distance": list_distance
-                    })
-                    messergebnisse.to_csv(csv_dateipfad, index=False)
+                        recording_panda_lists()
+                        
+                    list_2_csv()
 
                     sc.stop()   
                     print("Ende des Parcours.")
