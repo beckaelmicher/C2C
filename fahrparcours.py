@@ -174,14 +174,19 @@ def main(modus):
                     modus = None
 
             if modus == 4: 
-                
+                hindernisse = int(input("Wieviele Hindernisse dürfen es sein?: "))
                 x = input('ACHTUNG! Das Auto bewegt sich eigenständig durch den Raum!\n Drücken Sie ENTER zum Start.')
+                
                 if x == '':
                     print('Fahrparcours 4')
+                    
                     #no_obstacle = True
                     sc.steering_angle = 90
-
-                    while True:
+                    """zähler = 10
+                    wenn auf hindernis zähler --1
+                    
+                    """
+                    while hindernisse > 0:
                         # print(sc.abstand)
                         if sc.abstand > 10 or  sc.abstand < 0:
                             sc.drive(30, 1)
@@ -194,6 +199,7 @@ def main(modus):
                             time.sleep(2)
                             sc.stop()
                             sc.steering_angle = 90
+                            hindernisse -= 1
                         recording_panda_lists()
 
                     list_2_csv()
