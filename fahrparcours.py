@@ -4,6 +4,7 @@ import click
 from datetime import datetime as dt
 import time
 import pandas as pd
+import random
 
 @click.command()
 @click.option('--modus', '--m', type=int, default=None, help="Startet Test für Klasse direkt.")
@@ -173,10 +174,33 @@ def main(modus):
                     modus = None
 
             if modus == 4: 
+                
                 x = input('ACHTUNG! Das Auto bewegt sich eigenständig durch den Raum!\n Drücken Sie ENTER zum Start.')
                 if x == '':
                     print('Fahrparcours 4')
+                    #no_obstacle = True
+                    sc.steering_angle = 90
 
+                    while True:
+                        # print(sc.abstand)
+                        if sc.abstand > 10 or  sc.abstand < 0:
+                            sc.drive(30, 1)
+                        else:
+                            print("Hindernis")
+                            print(sc.abstand)                            
+                            sc.stop()
+                            sc.steering_angle = random.choice([45, 135])
+                            sc.drive(30, -1)
+                            time.sleep(2)
+                            sc.stop()
+                            sc.steering_angle = 90
+                        recording_panda_lists()
+
+                    list_2_csv()
+
+                    sc.stop()   
+                    print("Ende des Parcours.")
+                    modus = None
                         # tbd!
                     print("Ende des Parcours.")
                     modus = None
