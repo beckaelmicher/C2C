@@ -10,7 +10,7 @@ import pandas as pd
 def main(modus):
     """Function for choosing the parcours
 
-
+    
     Args:
         modus (int): The mode that can be choosen by the user
     """
@@ -41,16 +41,16 @@ def main(modus):
         list_steeringangle.append(sc.steering_angle)
         list_distance.append(sc.abstand)
 
-    def list_2_csv(mess_ergebnis):
+    def list_2_csv():
         messergebnisse = pd.DataFrame({
-            "Timestamp": list_time,
+            "timestamp": list_time,
             "timedelta": list_time_delta,
             "Speed": list_speed,
             "Direction": list_direction,
             "SteeringAngle": list_steeringangle,
             "Distance": list_distance
         })
-
+        nonlocal mess_ergebnis
         if mess_ergebnis == 0:
             messergebnisse.to_csv(csv_dateipfad, index=False)    
             mess_ergebnis = 1
@@ -66,8 +66,7 @@ def main(modus):
                 1: 'Fahrparcours 1 - Vorwärts und Rückwärts',
                 2: 'Fahrparcours 2 - Kreisfahrt mit maximalem Lenkwinkel',
                 3: 'Fahrparcours 3 - Vorwärtsfahrt bis Hindernis',
-                4: 'Fahrparcous 4 - Erkundungstour',
-                # 5: 'Test Hinter- und Vorderräder unter Verwendung der Konfigurationen in config.json',
+                4: 'Fahrparcours 4 - Erkundungstour'
             }
             
             if modus == None:
@@ -164,7 +163,7 @@ def main(modus):
                             sc.stop()
                         recording_panda_lists()
 
-                    list_2_csv(mess_ergebnis)
+                    list_2_csv()
 
                     sc.stop()   
                     print("Ende des Parcours.")
