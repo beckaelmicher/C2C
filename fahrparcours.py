@@ -18,8 +18,7 @@ def main(modus):
     bc = BaseCar()
     sc = SonicCar()
 
-    # Messergebnis und Listen ausgelagert, damit per Methode aufrufbar wird.
-    #global mess_ergebnis
+    # Messergebnis und Listen ausgelagert, damit per Methode aufrufbar
     list_time = []
     list_time_delta = []
     list_speed = []
@@ -61,7 +60,7 @@ def main(modus):
 
     try:
         while True:
-            print('-- Auswahl der Fahrfunktionen --------------------')
+            print('------ Auswahl der Fahrfunktionen ------')
             modi = {
                 0: 'Ausrichtung der Servo der Lenkung auf Geradeaus',
                 1: 'Fahrparcours 1 - Vorwärts und Rückwärts',
@@ -153,8 +152,6 @@ def main(modus):
                     sc.steering_angle = 90
 
                     while no_obstacle:
-                        
-                        # print(sc.abstand)
                         if sc.abstand > 10 or  sc.abstand < 0:
                             sc.drive(30, 1)
                         else:
@@ -179,15 +176,9 @@ def main(modus):
                 
                 if x == '':
                     print('Fahrparcours 4')
-                    
-                    #no_obstacle = True
                     sc.steering_angle = 90
-                    """zähler = 10
-                    wenn auf hindernis zähler --1
-                    
-                    """
+
                     while hindernisse > 0:
-                        # print(sc.abstand)
                         if sc.abstand > 10 or  sc.abstand < 0:
                             sc.drive(30, 1)
                         else:
@@ -205,9 +196,6 @@ def main(modus):
                     list_2_csv()
 
                     sc.stop()   
-                    print("Ende des Parcours.")
-                    modus = None
-                        # tbd!
                     print("Ende des Parcours.")
                     modus = None
                 else:
