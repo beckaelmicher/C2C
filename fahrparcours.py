@@ -18,7 +18,7 @@ def main(modus):
     sc = SonicCar()
 
     # Messergebnis und Listen ausgelagert, damit per Methode aufrufbar wird.
-    messergebnis = 0
+    #global mess_ergebnis
     list_time = []
     list_time_delta = []
     list_speed = []
@@ -27,21 +27,21 @@ def main(modus):
     list_distance = []
     time_alt = dt.now()
     time_alt = time_alt.timestamp()
-    
-    def recording_panda_lists(self):
-        self.csv_dateipfad = 'messergebnisse.csv'
+    csv_dateipfad = 'messergebnisse.csv'
+    mess_ergebnis = 0
+
+    def recording_panda_lists():
         time = dt.now()
         time = time.timestamp()
         time_diff = time-time_alt
         list_time.append(dt.now().strftime("%H:%M:%S.%f")[:11])
-        #time_alt = dt.now()
         list_time_delta.append(round(time_diff, 5))
         list_speed.append(sc.speed)
         list_direction.append(sc.direction)
         list_steeringangle.append(sc.steering_angle)
         list_distance.append(sc.abstand)
 
-    def list_2_csv(self):
+    def list_2_csv(mess_ergebnis):
         messergebnisse = pd.DataFrame({
             "Timestamp": list_time,
             "timedelta": list_time_delta,
@@ -50,11 +50,12 @@ def main(modus):
             "SteeringAngle": list_steeringangle,
             "Distance": list_distance
         })
-        if messergebnis == 0:
-            messergebnisse.to_csv(self.csv_dateipfad, index=False)    
-            messergebnis = 1
+
+        if mess_ergebnis == 0:
+            messergebnisse.to_csv(csv_dateipfad, index=False)    
+            mess_ergebnis = 1
         else:
-            messergebnisse.to_csv(self.csv_dateipfad, index=False, mode="a", header=False)
+            messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
 
     try:
@@ -162,8 +163,8 @@ def main(modus):
                             print(sc.abstand)
                             sc.stop()
                         recording_panda_lists()
-                        
-                    list_2_csv()
+
+                    list_2_csv(mess_ergebnis)
 
                     sc.stop()   
                     print("Ende des Parcours.")
