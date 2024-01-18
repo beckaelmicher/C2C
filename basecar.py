@@ -17,10 +17,10 @@ class BaseCar(object):
                 turning_offset = data["turning_offset"]
                 forward_A = data["forward_A"]
                 forward_B = data["forward_B"]
-                print("Daten in config.json:")
-                print(" - Turning Offset: ", turning_offset)
-                print(" - Forward A: ", forward_A)
-                print(" - Forward B: ", forward_B)
+                # print("Daten in config.json:")
+                # print(" - Turning Offset: ", turning_offset)
+                # print(" - Forward A: ", forward_A)
+                # print(" - Forward B: ", forward_B)
         except:
             print("Keine geeignete Datei config.json gefunden!")
         self.fw = FrontWheels(turning_offset=turning_offset) # turning_offset übergeben zur Justierung des Lenkeinschlags
