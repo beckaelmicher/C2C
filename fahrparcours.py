@@ -1,6 +1,7 @@
 from basecar import *
 from soniccar import *
 import click
+from datetime import datetime as dt
 import time
 import pandas as pd
 
@@ -108,13 +109,23 @@ def main(modus):
                     print('Fahrparcours 3')
                     no_obstacle = True
                     sc.steering_angle = 90
+                    list_time = []
+                    list_time_delta = []
                     list_speed = []
                     list_direction = []
                     list_steeringangle = []
                     list_distance = []
-                    
+                    time_alt = dt.now()
+                    time_alt = time_alt.timestamp()
+
                     while no_obstacle:
                         csv_dateipfad = 'messergebnisse.csv'
+                        time = dt.now()
+                        time = time.timestamp()
+                        time_diff = time-time_alt
+                        list_time.append(dt.now().strftime("%H:%M:%S.%f")[:11])
+                        #time_alt = dt.now()
+                        list_time_delta.append(round(time_diff, 5))
                         list_speed.append(sc.speed)
                         list_direction.append(sc.direction)
                         list_steeringangle.append(sc.steering_angle)
@@ -129,6 +140,8 @@ def main(modus):
                             sc.stop()
 
                     messergebnisse = pd.DataFrame({
+                        "Timestamp": list_time,
+                        "timedelta": list_time_delta,
                         "Speed": list_speed,
                         "Direction": list_direction,
                         "SteeringAngle": list_steeringangle,
