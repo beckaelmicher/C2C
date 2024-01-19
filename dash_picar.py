@@ -19,7 +19,7 @@ df = pd.read_csv("messergebnisse.csv")
 # Definition eines dbc Element für die spätere Verwenung im Layout
 card_max_speed = dbc.Card(
     [
-        dbc.CardImg(src="/max.jpg", top=True),
+        dbc.CardImg(src="/static/images/max.jpg", top=True),
         dbc.CardBody(
             [
                 html.H4("Max Speed", className="card-title"),
@@ -35,7 +35,7 @@ card_max_speed = dbc.Card(
 
 card_min_speed = dbc.Card(
     [
-        dbc.CardImg(src="~/git/C2C/low.jpg", top=True),
+        dbc.CardImg(src="/static/images/low.jpg", top=True),
         dbc.CardBody(
             [
                 html.H4("Min Speed", className="card-title"),
@@ -51,7 +51,7 @@ card_min_speed = dbc.Card(
 
 card_avg_speed = dbc.Card(
     [
-        dbc.CardImg(src="/mid.jpg", top=True),
+        dbc.CardImg(src="/static/images/mid.jpg", top=True),
         dbc.CardBody(
             [
                 html.H4("Avg Speed", className="card-title"),
@@ -103,6 +103,8 @@ app.layout = html.Div(
             dbc.Col([card_max_speed], width=2),
             dbc.Col([card_min_speed], width=2),
             dbc.Col([card_avg_speed], width=2),
+        ], align='center'),
+         dbc.Row([
             dbc.Col([card_total_driving_length], width=2),
             dbc.Col([card_total_test_time], width=2)
         ], align='center'),
@@ -114,8 +116,9 @@ app.layout = html.Div(
                          {'label': 'Speed', 'value': 'Speed'},
                          {'label': 'Direction', 'value': 'Direction'},
                          {'label': 'Distance', 'value': 'Distance'},
+                         {'label': 'Steering angle', 'value': 'SteeringAngle'},
                      ],
-                     value='Speed'),
+                     value='SteeringAngle'),
         dcc.Graph(id='line_plot'),
         html.Br(),
         
@@ -133,5 +136,5 @@ def graph_update(value_of_input_component):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
-    #app.run_server(host = '178.168.188.60', port=8080, debug=True)
+    #app.run_server(debug=True)
+    app.run_server(host = '192.168.178.183', port=8080, debug=True)
