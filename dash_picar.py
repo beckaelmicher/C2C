@@ -8,7 +8,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 
 # Verwendung von externen Stylesheets
-app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
+app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
 
 df = pd.read_csv("messergebnisse.csv")
 
@@ -35,7 +35,7 @@ card_max_speed = dbc.Card(
 
 card_min_speed = dbc.Card(
     [
-        dbc.CardImg(src="/low.jpg", top=True),
+        dbc.CardImg(src="~/git/C2C/low.jpg", top=True),
         dbc.CardBody(
             [
                 html.H4("Min Speed", className="card-title"),
@@ -107,15 +107,15 @@ app.layout = html.Div(
             dbc.Col([card_total_test_time], width=2)
         ], align='center'),
         html.H2(id='titel',
-                children='Aktienkurse'),
-        html.Div(children='Wählen Sie eine anzuzeigende Aktie aus.'),
+                children='Messsignale'),
+        html.Div(children='Wählen Sie ein anzuzeigendes Signal aus.'),
         dcc.Dropdown(id='dropdown',
                      options=[
-                         {'label': 'Google', 'value': 'GOOG'},
-                         {'label': 'Apple', 'value': 'AAPL'},
-                         {'label': 'Amazon', 'value': 'AMZN'},
+                         {'label': 'Speed', 'value': 'Speed'},
+                         {'label': 'Direction', 'value': 'Direction'},
+                         {'label': 'Distance', 'value': 'Distance'},
                      ],
-                     value='GOOG'),
+                     value='Speed'),
         dcc.Graph(id='line_plot'),
         html.Br(),
         
@@ -128,7 +128,7 @@ app.layout = html.Div(
               [Input(component_id='dropdown', component_property='value')])
 def graph_update(value_of_input_component):
     print(value_of_input_component)
-    fig = px.line(df, x=df['date'], y=df[value_of_input_component])
+    fig = px.line(df, x=df['timestamp'], y=df[value_of_input_component])
     return fig
 
 
