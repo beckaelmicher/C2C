@@ -154,9 +154,9 @@ def main(modus):
 
                     while no_obstacle:
                         abstand = sc.abstand
-                        if abstand > 10 or abstand < 0:
+                        if abstand > 20 or abstand < 0:
                             print("Drive - Abstand =", abstand)
-                            sc.drive(30, 1)
+                            sc.drive(40, 1)
                         else:
                             print("Halt - Abstand = ", abstand)
                             no_obstacle = False
@@ -183,14 +183,14 @@ def main(modus):
 
                     while hindernisse > 0:
                         abstand = sc.abstand
-                        if abstand > 10 or abstand < 0:
-                            sc.drive(30, 1)
+                        if abstand > 20 or abstand < 0:
+                            sc.drive(40, 1)
                         else:
                             print("Hindernis")
                             print(sc.abstand)                            
                             sc.stop()
                             sc.steering_angle = random.choice([45, 135])
-                            sc.drive(30, -1)
+                            sc.drive(40, -1)
                             time.sleep(2)
                             sc.stop()
                             sc.steering_angle = 90
