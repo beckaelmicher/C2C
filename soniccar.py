@@ -18,8 +18,12 @@ class SonicCar(BaseCar):
     def abstand(self):
         return self.us.distance()
     
-
-
+    def stop(self):
+        """Methode zum Stoppen
+        Überschrieben aus BaseCar und erweitert um Stoppen des Ultraschallsensors
+        """
+        self.bw.stop()
+        self.us.stop()
 
            
     
