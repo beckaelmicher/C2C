@@ -5,7 +5,6 @@ from datetime import datetime as dt
 import time
 import pandas as pd
 import random
-from basisklassen import Ultrasonic
 
 @click.command()
 @click.option('--modus', '--m', type=int, default=None, help="Startet Test für Klasse direkt.")
@@ -40,7 +39,7 @@ def main(modus):
         list_speed.append(sc.speed)
         list_direction.append(sc.direction)
         list_steeringangle.append(sc.steering_angle)
-        list_distance.append(abstand)
+        list_distance.append(sc.abstand)
 
     def list_2_csv():
         messergebnisse = pd.DataFrame({
@@ -153,14 +152,12 @@ def main(modus):
                     sc.steering_angle = 90
 
                     while no_obstacle:
-                        abstand = sc.abstand
-                        if abstand > 10 or abstand < 0:
-                            print("Drive - Abstand =", abstand)
+                        if sc.abstand > 10 or  sc.abstand < 0:
                             sc.drive(30, 1)
                         else:
-                            print("Halt - Abstand = ", abstand)
                             no_obstacle = False
                             print("Hindernis")
+                            print(sc.abstand)
                             sc.stop()
                         recording_panda_lists()
 
@@ -182,8 +179,7 @@ def main(modus):
                     sc.steering_angle = 90
 
                     while hindernisse > 0:
-                        abstand = sc.abstand
-                        if abstand > 10 or abstand < 0:
+                        if sc.abstand > 10 or  sc.abstand < 0:
                             sc.drive(30, 1)
                         else:
                             print("Hindernis")
