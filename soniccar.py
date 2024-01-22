@@ -1,7 +1,5 @@
 from basecar import *
 
-
-
 class SonicCar(BaseCar):
     def __init__(self) -> None:      
         super().__init__()

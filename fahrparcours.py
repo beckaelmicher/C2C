@@ -1,6 +1,6 @@
-#from basecar import *
-#from soniccar import *
-#from basisklassen import Ultrasonic
+# from basecar import *
+# from soniccar import *
+# from basisklassen import Ultrasonic, Infrared
 from ir_car import *
 import click
 from datetime import datetime as dt
@@ -211,9 +211,16 @@ def main(modus):
                     modus = None
             
             if modus == 5:
+                try:
+                    with open("config.json", "r") as f:
+                        data = json.load(f)
+                        schwellwert = data["IR_schwellwert"]
+                except:
+                    print("Keine geeignete Datei config.json gefunden!")                
                 black_line = True
                 while black_line:
-                    ls = irc.ir_auslesen()
+                    ls = irc.ir_werte
+                    print(ls)
                     min_val = ls[0]
                     min_val_idx = 0
                     for i in range (len(ls)):
@@ -221,6 +228,7 @@ def main(modus):
                             min_val = ls[i]
                             min_val_idx = i    
                     
+                    print(min_val_idx)
                     if min_val_idx == 0:
                         irc.steering_angle = 45
                         #links stark
@@ -233,7 +241,10 @@ def main(modus):
                     elif min_val_idx == 4:
                         irc.steering_angle = 135
                     
-                    
+
+                    #irc.drive(30, 1)
+                    if min(ls) > schwellwert:
+                        pass 
                 
             
     except KeyboardInterrupt:
