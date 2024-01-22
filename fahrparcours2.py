@@ -250,16 +250,17 @@ def main(modus):
                             irc.drive(20, 1)
                             time.sleep(0.5)
                             irc.stop()
+                            time.sleep(0.1)
                             #  Gegenwinkel lenken und 1/2 Auto zurück
-                            if min_val_idx == 0:
-                                irc.steering_angle == 135
-                            else:
-                                irc.steering_angle == 45
+                            if min_val_idx == 0 or min_val_idx == 1:
+                                irc.steering_angle = 135
+                            elif min_val_idx == 3 or min_val_idx == 4:
+                                irc.steering_angle = 45
                             irc.drive(30, -1)
                             time.sleep(0.5)
                             
                         print(schwellwert)
-                        if (sum(ls)/5 - min(ls)) < schwellwert:  # Funktioniert nicht sauber
+                        if (sum(ls)/5 - min(ls)) < schwellwert: 
                             print(min(ls))
                             print("Halteschwelle erreicht")
                             black_line = False
