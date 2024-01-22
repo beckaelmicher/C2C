@@ -6,6 +6,7 @@ import plotly.express as px
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
+import json
 
 # Verwendung von externen Stylesheets
 app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
@@ -131,10 +132,18 @@ app.layout = html.Div(
               [Input(component_id='dropdown', component_property='value')])
 def graph_update(value_of_input_component):
     print(value_of_input_component)
-    fig = px.line(df, x=df['timestamp'], y=df[value_of_input_component])
+    fig = px.line(df, x=df['timedelta'], y=df[value_of_input_component])
     return fig
 
 
 if __name__ == '__main__':
-    #app.run_server(debug=True)
-    app.run_server(host = '192.168.178.183', port=8080, debug=True)
+    try:
+        with open("config.json", "r") as f:
+            data = json.load(f)
+            raspberry_ip = data["raspberry_ip"]
+            app.run_server(host = raspberry_ip, port=8080, debug=True)
+    except:
+        print("Keine geeignete Datei config.json gefunden!")
+        app.run_server(debug=True)
+
+
