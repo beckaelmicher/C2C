@@ -7,7 +7,7 @@ from datetime import datetime as dt
 import time
 import pandas as pd
 import random
-
+import json
 
 @click.command()
 @click.option('--modus', '--m', type=int, default=None, help="Startet Test für Klasse direkt.")
@@ -256,11 +256,11 @@ def main(modus):
                             else:
                                 irc.steering_angle == 45
                             irc.drive(30, -1)
-                            time.sleep(0.5)
+                            time.sleep(1)
                             continue
                             
                         print(schwellwert)
-                        if (sum(ls)/5 - min(ls)) < schwellwert:  # Funktioniert nicht sauber
+                        if (sum(ls)/5 - min(ls)) < schwellwert: 
                             print(min(ls))
                             print("Halteschwelle erreicht")
                             black_line = False
