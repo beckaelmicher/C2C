@@ -2,6 +2,7 @@
 config.json
 messergebnisse.csv
 fahrparcours_pf.py
+test_*.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
