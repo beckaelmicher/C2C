@@ -61,7 +61,6 @@ def main(modus):
         else:
             messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
-
     try:
         while True:
             print('------ Auswahl der Fahrfunktionen ------')
@@ -211,41 +210,55 @@ def main(modus):
                     modus = None
             
             if modus == 5:
-                try:
-                    with open("config.json", "r") as f:
-                        data = json.load(f)
-                        schwellwert = data["IR_schwellwert"]
-                except:
-                    print("Keine geeignete Datei config.json gefunden!")                
-                black_line = True
-                while black_line:
-                    ls = irc.ir_werte
-                    print(ls)
+                x = input('ACHTUNG! Das Auto bewegt sich eigenständig durch den Raum!\n Drücken Sie ENTER zum Start.')
+                
+                if x == '':
+                    try:
+                        with open("config.json", "r") as f:
+                            data = json.load(f)
+                            schwellwert = data["IR_schwellwert"]
+                    except:
+                        print("Keine geeignete Datei config.json gefunden!")
 
-                    min_val = ls[0]
-                    min_val_idx = 0
-                    for i in range (len(ls)):
-                        if ls[i] < min_val:
-                            min_val = ls[i]
-                            min_val_idx = i    
-                    irc.drive(30, 1)
-                    print(min_val_idx)
-                    if min_val_idx == 0:
-                        irc.steering_angle = 45
-                        #links stark
-                    elif min_val_idx == 1:
-                        irc.steering_angle = 68
-                    elif min_val_idx == 2:
-                        irc.steering_angle = 90
-                    elif min_val_idx == 3:
-                        irc.steering_angle = 112
-                    elif min_val_idx == 4:
-                        irc.steering_angle = 135
-                    
-                    
-                    if min(ls) > schwellwert:
-                        black_line = False
-                        irc.stop() 
+                    black_line = True
+                    while black_line:
+                        ls = irc.ir_werte
+                        print(ls)
+
+                        min_val = ls[0]
+                        min_val_idx = 0
+                        for i in range (len(ls)):
+                            if ls[i] < min_val:
+                                min_val = ls[i]
+                                min_val_idx = i    
+                        irc.drive(30, 1)
+                        print("Min_Index", min_val_idx)
+                        if min_val_idx == 0:
+                            irc.steering_angle = 45
+                            time.sleep(0.5)
+                        elif min_val_idx == 1:
+                            irc.steering_angle = 68
+                            time.sleep(0.5)
+                        elif min_val_idx == 2:
+                            irc.steering_angle = 90
+                            time.sleep(0.5)
+                        elif min_val_idx == 3:
+                            irc.steering_angle = 112
+                            time.sleep(0.5)
+                        elif min_val_idx == 4:
+                            irc.steering_angle = 135
+                            time.sleep(0.5)
+    
+                        print(schwellwert)
+                        if min(ls) > 30:  # Funktioniert nicht sauber
+                            print(min(ls))
+                            print("Halteschwelle erreicht")
+                            black_line = False
+                            irc.steering_angle = 90
+                            irc.stop()
+                else:
+                    print('Abbruch.')
+                    modus = None                
                 
             
     except KeyboardInterrupt:
