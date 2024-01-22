@@ -1,11 +1,13 @@
-from basecar import *
-from soniccar import *
+#from basecar import *
+#from soniccar import *
+#from basisklassen import Ultrasonic
+from ir_car import *
 import click
 from datetime import datetime as dt
 import time
 import pandas as pd
 import random
-from basisklassen import Ultrasonic
+
 
 @click.command()
 @click.option('--modus', '--m', type=int, default=None, help="Startet Test für Klasse direkt.")
@@ -18,6 +20,7 @@ def main(modus):
     """
     bc = BaseCar()
     sc = SonicCar()
+    irc = IRCar()
 
     # Messergebnis und Listen ausgelagert, damit per Methode aufrufbar
     list_time = []
@@ -67,7 +70,8 @@ def main(modus):
                 1: 'Fahrparcours 1 - Vorwärts und Rückwärts',
                 2: 'Fahrparcours 2 - Kreisfahrt mit maximalem Lenkwinkel',
                 3: 'Fahrparcours 3 - Vorwärtsfahrt bis Hindernis',
-                4: 'Fahrparcours 4 - Erkundungstour'
+                4: 'Fahrparcours 4 - Erkundungstour',
+                5: 'Fahrparcours 5 - Linienverfolgung'
             }
             
             if modus == None:
@@ -205,6 +209,33 @@ def main(modus):
                 else:
                     print('Abbruch.')
                     modus = None
+            
+            if modus == 5:
+                black_line = True
+                while black_line:
+                    ls = irc.ir_auslesen()
+                    min_val = ls[0]
+                    min_val_idx = 0
+                    for i in range (len(ls)):
+                        if ls[i] < min_val:
+                            min_val = ls[i]
+                            min_val_idx = i    
+                    
+                    if min_val_idx == 0:
+                        irc.steering_angle = 45
+                        #links stark
+                    elif min_val_idx == 1:
+                        irc.steering_angle = 68
+                    elif min_val_idx == 2:
+                        irc.steering_angle = 90
+                    elif min_val_idx == 3:
+                        irc.steering_angle = 112
+                    elif min_val_idx == 4:
+                        irc.steering_angle = 135
+                    
+                    
+                
+            
     except KeyboardInterrupt:
         print("\nProgramm abgebrochen!")
         bc.stop()   # Fahrzeug anhalten
