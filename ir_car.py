@@ -1,6 +1,8 @@
 #from basecar import *
 from soniccar import * 
 
+
+
 class IRCar(SonicCar):
     def __init__(self) -> None:
         super().__init__()
@@ -11,6 +13,11 @@ class IRCar(SonicCar):
         except:
             print("Keine geeignete Datei config.json gefunden!")
         self.ir_auslesen = Infrared().read_analog()
+        #print(type(self.ir_auslesen))
+        #print(self.ir_auslesen)
         
+#ir_car = IRCar()
+
+    
         
     

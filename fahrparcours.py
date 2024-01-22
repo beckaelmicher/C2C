@@ -1,6 +1,6 @@
-#from basecar import *
-#from soniccar import *
-#from basisklassen import Ultrasonic
+from basecar import *
+from soniccar import *
+from basisklassen import Ultrasonic
 from ir_car import *
 import click
 from datetime import datetime as dt
@@ -213,7 +213,8 @@ def main(modus):
             if modus == 5:
                 black_line = True
                 while black_line:
-                    ls = irc.ir_auslesen()
+                    ls = irc.ir_auslesen
+                    #print(irc.ir_auslesen())
                     min_val = ls[0]
                     min_val_idx = 0
                     for i in range (len(ls)):
