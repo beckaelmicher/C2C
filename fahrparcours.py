@@ -221,6 +221,7 @@ def main(modus):
                 while black_line:
                     ls = irc.ir_werte
                     print(ls)
+
                     min_val = ls[0]
                     min_val_idx = 0
                     for i in range (len(ls)):
