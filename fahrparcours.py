@@ -235,27 +235,30 @@ def main(modus):
                         print("Min_Index", min_val_idx)
                         if min_val_idx == 0:
                             irc.steering_angle = 45
-                            time.sleep(0.5)
+                            #time.sleep(0.5)
                         elif min_val_idx == 1:
                             irc.steering_angle = 68
-                            time.sleep(0.5)
+                            #time.sleep(0.5)
                         elif min_val_idx == 2:
                             irc.steering_angle = 90
-                            time.sleep(0.5)
+                            #time.sleep(0.5)
                         elif min_val_idx == 3:
                             irc.steering_angle = 112
-                            time.sleep(0.5)
+                            #time.sleep(0.5)
                         elif min_val_idx == 4:
                             irc.steering_angle = 135
-                            time.sleep(0.5)
+                            #time.sleep(0.5)
     
                         print(schwellwert)
-                        if min(ls) > 30:  # Funktioniert nicht sauber
+                        if (sum(ls)/5 - min(ls)) < schwellwert:  # Funktioniert nicht sauber
                             print(min(ls))
                             print("Halteschwelle erreicht")
                             black_line = False
                             irc.steering_angle = 90
                             irc.stop()
+                    irc.stop()   
+                    print("Ende des Parcours.")
+                    modus = None
                 else:
                     print('Abbruch.')
                     modus = None                
