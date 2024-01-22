@@ -228,7 +228,7 @@ def main(modus):
                         if ls[i] < min_val:
                             min_val = ls[i]
                             min_val_idx = i    
-                    
+                    irc.drive(30, 1)
                     print(min_val_idx)
                     if min_val_idx == 0:
                         irc.steering_angle = 45
@@ -242,10 +242,10 @@ def main(modus):
                     elif min_val_idx == 4:
                         irc.steering_angle = 135
                     
-
-                    #irc.drive(30, 1)
+                    
                     if min(ls) > schwellwert:
-                        pass 
+                        black_line = False
+                        irc.stop() 
                 
             
     except KeyboardInterrupt:
