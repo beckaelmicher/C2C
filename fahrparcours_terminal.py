@@ -173,7 +173,9 @@ def main(modus):
                     no_obstacle = True
                     sc.steering_angle = 90
 
+                    # Fahrfunktion asuführen, so lange kein Hindernis erkannt wird
                     while no_obstacle:
+                        # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
                         abstand = sc.abstand
                         # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
                         if abstand > 20 or abstand < 0:
@@ -182,7 +184,7 @@ def main(modus):
                         else:
                             print("Halt - Abstand = ", abstand)
                             no_obstacle = False
-                            print("Hindernis")
+                            print("Hindernis erkannt!")
                             sc.stop()
                         recording_panda_lists(sc)
 
@@ -206,17 +208,19 @@ def main(modus):
 
                     # Fahrzeug fährt bis Anzahl an Hindernissen erkannt
                     while hindernisse > 0:
+                        # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
                         abstand = sc.abstand
+                        # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
                         if abstand > 20 or abstand < 0:
-                            sc.drive(40, 1)
+                            sc.drive(30, 1)
                         else:
                             # Ausweichroutine bei erkanntem Hindernis
-                            print("Hindernis")
-                            print(sc.abstand)                            
+                            print("Hindernis erkannt!")
+                            print("Abstand: ", sc.abstand)                            
                             sc.stop()
                             # Zufällige Auswahl vollständiger Lenkeinschlag nach links oder rechts
                             sc.steering_angle = random.choice([45, 135])
-                            sc.drive(40, -1)
+                            sc.drive(30, -1)
                             time.sleep(2)
                             sc.stop()
                             sc.steering_angle = 90
@@ -244,12 +248,16 @@ def main(modus):
                             schwellwert = data["IR_schwellwert"]
                     except:
                         print("Keine geeignete Datei config.json gefunden!")
-                
-                    black_line = True
-                    while black_line:
-                        ls = irc.ir_werte
-                        print(ls)
 
+                    black_line = True
+                    # Fahrfunktion ausführen so lange wie eine schwarze Linie erkannt wird
+                    while black_line:
+                        # Anlegen einer Liste mit den gemessenen Werten des IR-Sensors
+                        ls = irc.ir_werte
+                        print("--"*20)
+                        print("IR-Werte: ", ls)
+
+                        # Ermittlung des Minimalwerts und des zugehörigen List-Indexes (für den einzelen Sensor)
                         min_val = ls[0]
                         min_val_idx = 0
                         for i in range (len(ls)):
@@ -257,43 +265,52 @@ def main(modus):
                                 min_val = ls[i]
                                 min_val_idx = i
                                  
-                        
-                        if min_val_idx == 0 or min_val_idx == 4:
-                            if min_val_idx == 0:
-                                irc.steering_angle = 45
-                            else:
-                                irc.steering_angle = 135
-                        elif min_val_idx == 1 or min_val_idx == 3:
-                            if min_val_idx == 1:
-                                irc.steering_angle = 68
-                            else:
-                                irc.steering_angle = 112
+                        # Abfrage ob äußere Sensoren die Linie erkannt haben, um direkt stark zu lenken
+                        if min_val_idx == 0:
+                            irc.steering_angle = 45
+                        elif min_val_idx == 4:
+                            irc.steering_angle = 135
+                        # wird die Linie durch einen der beiden inneren Sensoren erkannt, wird nur leicht gelenkt        
+                        elif min_val_idx == 1:
+                            irc.steering_angle = 68
+                        elif min_val_idx == 3:
+                            irc.steering_angle = 112
+                        # wird die Linie durch den mittleren Sensor ekannt, wird geradeaus gelenkt
                         else:
                             irc.steering_angle = 90
+
+                        # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
                         abstand = irc.abstand
+                        # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
                         if abstand < 15 and abstand > 0:            
                             print("Hindernis erkannt - halte an!")
                             irc.stop()
                             recording_panda_lists(irc)
+                            # Bei erkanntem Hindernis anhalten und While-Schleife verlassen 
                             break
+                        # Fahrprogramm zum Folgen der schwarzen Linie
                         else:
                             irc.drive(30, 1)
                             recording_panda_lists(irc)
+                            # Berechnung der Standardabweichung der IR-Werte mittels Pandas
                             ir_std = pd.Series(ls).std()
-                            print("ir_std: ", ir_std)
+                            print("IR-Standardabweichung: ", ir_std)
+                            # Setzen des aktuellen Minimalwerts
                             ir_min = min(ls)
-                            print("ir_min: ", ir_min)
-                            print("min_val_idx: ", min_val_idx)
+                            print("IR-Minimalwert: ", ir_min)
+                            print("Index Sensor mit Minimalwert: ", min_val_idx)
+
+                            # Abfrage ob äußere Sensoren zuletzt die schwarze Linie erkannt haben
+                            # und anschließend kein Sensor mehr die Linie erkennt
                             if ((min_val_idx == 4) or (min_val_idx == 0)) and (ir_std < schwellwert) and (ir_min > schwellwert):
                                 print("Kurve zu eng")
-                                # 1/2 Auto vorfahren
+                                # Fahrmanöver zum wieder Auffinden der Linie einleiten
                                 irc.drive(20, 1)
                                 recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 irc.stop()
                                 recording_panda_lists(irc)
                                 time.sleep(0.1)
-                                #  Gegenwinkel lenken und 1/2 Auto zurück
                                 if min_val_idx == 0 or min_val_idx == 1:
                                     irc.steering_angle = 135
                                     recording_panda_lists(irc)
@@ -303,8 +320,11 @@ def main(modus):
                                 irc.drive(30, -1)
                                 recording_panda_lists(irc)
                                 time.sleep(0.5)
+                                # Nach Fahrmanöver Fortsetzen des Fahrparcours
                                 continue
 
+                            # Abfrage auf Spezialfall "scharfe Rechtskurve" 
+                            # bei dem die drei rechten Sensoren alle eine Linie erkennen
                             if (ls[2] < schwellwert) and (ls[3] < schwellwert) and (ls[4] < schwellwert):
                                 irc.steering_angle = 45
                                 irc.drive(30, -1)
@@ -314,8 +334,11 @@ def main(modus):
                                 irc.drive(30, 1)
                                 recording_panda_lists(irc)
                                 time.sleep(0.5)
+                                # Nach Fahrmanöver Fortsetzen des Fahrparcours
                                 continue
 
+                            # Abfrage auf Spezialfall "scharfe Linkskurve" 
+                            # bei dem die drei linken Sensoren alle eine Linie erkennen
                             if (ls[2] < schwellwert) and (ls[1] < schwellwert) and (ls[0] < schwellwert):
                                 irc.steering_angle = 135
                                 irc.drive(30, -1)
@@ -325,11 +348,12 @@ def main(modus):
                                 irc.drive(30, 1)
                                 recording_panda_lists(irc)
                                 time.sleep(0.5)
+                                # Nach Fahrmanöver Fortsetzen des Fahrparcours
                                 continue
 
-                            if ir_min > schwellwert: # (ir_std < (schwellwert/2)) and (ir_min > schwellwert): 
-                                print(min(ls))
-                                print("Halteschwelle erreicht")
+                            # Abfrage ob Linie zu ende
+                            if (ir_std < schwellwert) and (ir_min > schwellwert): 
+                                print("Halte an, Linie verlassen!")
                                 black_line = False
                                 irc.steering_angle = 90
                                 irc.stop()
@@ -343,7 +367,7 @@ def main(modus):
                     print('Abbruch.')
                     modus = None                
 
-
+    # Möglichkeit zum Programmabbruch und Stoppen des Fahrzeugs durch STRG+C
     except KeyboardInterrupt:
         print("\nProgramm abgebrochen!")
         bc.stop()   # Fahrzeug anhalten
