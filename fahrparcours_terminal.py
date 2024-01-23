@@ -352,7 +352,8 @@ def main(modus):
                                 continue
 
                             # Abfrage ob Linie zu ende
-                            if (ir_std < schwellwert) and (ir_min > schwellwert): 
+                            if (ir_std < schwellwert/2) and (ir_min > schwellwert): 
+                                # Hinweis: Schwellenwert nochmals optimieren, ggf. in Echtzeit messen
                                 print("Halte an, Linie verlassen!")
                                 black_line = False
                                 irc.steering_angle = 90
