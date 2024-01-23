@@ -73,7 +73,7 @@ card_total_driving_length = dbc.Card(
             [
                 html.H4("Gesamtfahrstrecke", className="card-title"),
                 html.P(
-                    str(round(df["Speed"].mean() * (max(df["timedelta"])-min(df["timedelta"])), 2)) + " cm",
+                    str(round(df["Speed"].mean() * (max(df["Time"])-min(df["Time"])), 2)) + " cm",
                     className="card-text",
                 ),
             ]
@@ -89,7 +89,7 @@ card_total_test_time = dbc.Card(
             [
                 html.H4("Gesamttestzeit", className="card-title"),
                 html.P(
-                    str(round(max(df["timedelta"])-min(df["timedelta"]),2)) + " s",
+                    str(round(max(df["Time"])-min(df["Time"]),2)) + " s",
                     className="card-text",
                 ),
             ]
@@ -132,7 +132,7 @@ app.layout = html.Div(
               [Input(component_id='dropdown', component_property='value')])
 def graph_update(value_of_input_component):
     print(value_of_input_component)
-    fig = px.line(df, x=df['timedelta'], y=df[value_of_input_component])
+    fig = px.line(df, x=df['Time'], y=df[value_of_input_component])
     return fig
 
 
