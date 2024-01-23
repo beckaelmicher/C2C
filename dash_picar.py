@@ -105,8 +105,6 @@ app.layout = html.Div(
             dbc.Col([card_max_speed], width=2),
             dbc.Col([card_min_speed], width=2),
             dbc.Col([card_avg_speed], width=2),
-        ], align='center'),
-         dbc.Row([
             dbc.Col([card_total_driving_length], width=2),
             dbc.Col([card_total_test_time], width=2)
         ], align='center'),
@@ -141,8 +139,10 @@ def graph_update(value_of_input_component):
     fig = px.line(df, x=df['Time'], y=df[value_of_input_component])
     return fig
 
-
+# Main zum direkten Aufruf und Anzeigen des Dashboards im Webbrowser
 if __name__ == '__main__':
+    #Prüfung, ob eine IP-Adresse für den Pi in der config.json hinterlegt ist, 
+    # falls nicht, wird das Dashboard lokal im Webbrowser angezeigt
     try:
         with open("config.json", "r") as f:
             data = json.load(f)
