@@ -370,6 +370,7 @@ def main(modus):
     # Möglichkeit zum Programmabbruch und Stoppen des Fahrzeugs durch STRG+C
     except KeyboardInterrupt:
         print("\nProgramm abgebrochen!")
+        list_2_csv()
         bc.stop()   # Fahrzeug anhalten
         bc.steering_angle = 90  # Lenkung gerade ausrichten
 
