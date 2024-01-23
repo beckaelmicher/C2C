@@ -228,26 +228,31 @@ def main(modus):
                         min_val = ls[0]
                         min_val_idx = 0
                         for i in range (len(ls)):
-                            if ls[i] < min_val:
+                            if ls[i] <= min_val:
                                 min_val = ls[i]
-                                min_val_idx = i    
-                        irc.drive(30, 1)
-                        print("Min_Index", min_val_idx)
-                        if min_val_idx == 0:
-                            irc.steering_angle = 45
-                        elif min_val_idx == 1:
-                            irc.steering_angle = 68
-                        elif min_val_idx == 2:
+                                min_val_idx = i
+                                 
+                        
+                        if min_val_idx == 0 or min_val_idx == 4:
+                            if min_val_idx == 0:
+                                irc.steering_angle = 45
+                            else:
+                                irc.steering_angle = 135
+                        elif min_val_idx == 1 or min_val_idx == 3:
+                            if min_val_idx == 1:
+                                irc.steering_angle = 68
+                            else:
+                                irc.steering_angle = 112
+                        else:
                             irc.steering_angle = 90
-                        elif min_val_idx == 3:
-                            irc.steering_angle = 112
-                        elif min_val_idx == 4:
-                            irc.steering_angle = 135
-
+                        irc.drive(30, 1)
                         ir_std = pd.Series(ls).std()
+                        print("ir_std: ", ir_std)
                         ir_min = min(ls)
+                        print("ir_min: ", ir_min)
                         print("min_val_idx: ", min_val_idx)
                         if ((min_val_idx == 4) or (min_val_idx == 0)) and (ir_std < schwellwert) and (ir_min > schwellwert):
+                            print("Kurve zu eng")
                             # 1/2 Auto vorfahren
                             irc.drive(20, 1)
                             time.sleep(0.5)
@@ -262,8 +267,16 @@ def main(modus):
                             time.sleep(0.5)
                             continue
 
-                        print(schwellwert)
-                        if (ir_std < schwellwert) and (ir_min > schwellwert): 
+                        if (ls[2] < schwellwert) and (ls[3] < schwellwert) and (ls[4] < schwellwert):
+                            irc.steering_angle = 45
+                            irc.drive(30, -1)
+                            time.sleep(0.5)
+                            irc.steering_angle = 135
+                            irc.drive(30, 1)
+                            time.sleep(0.5)
+                            continue
+
+                        if (ir_std < (schwellwert/2)) and (ir_min > schwellwert): 
                             print(min(ls))
                             print("Halteschwelle erreicht")
                             black_line = False
