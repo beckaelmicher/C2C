@@ -8,16 +8,12 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import json
 
-# Verwendung von externen Stylesheets
+# Verwendung von externen Stylesheets 
 app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
-
+# Einlesen der CSV-Datei mit den Messergebnissen in ein Panda Dataframe
 df = pd.read_csv("messergebnisse.csv")
 
-#print(df.info())
-
-#print(df["Distance"].mean())
-
-# Definition eines dbc Element für die spätere Verwenung im Layout
+# Definition "Kartenelements zur Anzeige der max. Geschwindigkeit"
 card_max_speed = dbc.Card(
     [
         dbc.CardImg(src="/static/images/max.jpg", style={'height':150, 'width':150}, top=True),
@@ -34,6 +30,7 @@ card_max_speed = dbc.Card(
     style={"width": "18rem"},
 )
 
+# Definition "Kartenelements zur Anzeige der min. Geschwindigkeit"
 card_min_speed = dbc.Card(
     [
         dbc.CardImg(src="/static/images/low.jpg", style={'height':150, 'width':150}, top=True),
@@ -50,6 +47,7 @@ card_min_speed = dbc.Card(
     style={"width": "18rem"},
 )
 
+# Definition "Kartenelements zur Anzeige der durchschnittlichen Geschwindigkeit"
 card_avg_speed = dbc.Card(
     [
         dbc.CardImg(src="/static/images/mid.jpg", style={'height':150, 'width':150}, top=True),
@@ -66,9 +64,10 @@ card_avg_speed = dbc.Card(
     style={"width": "18rem"},
 )
 
+# Definition "Kartenelements zur Anzeige der Gesamtfahrstrecke
 card_total_driving_length = dbc.Card(
     [
-        #dbc.CardImg(src="/static/images/squirrel.png", top=True),
+        dbc.CardImg(src="/static/images/track.png", style={'height':150, 'width':150}, top=True),
         dbc.CardBody(
             [
                 html.H4("Gesamtfahrstrecke", className="card-title"),
@@ -84,7 +83,7 @@ card_total_driving_length = dbc.Card(
 
 card_total_test_time = dbc.Card(
     [
-        #dbc.CardImg(src="/static/images/squirrel.png", top=True),
+        dbc.CardImg(src="/static/images/time.png", style={'height':150, 'width':150}, top=True),
         dbc.CardBody(
             [
                 html.H4("Gesamttestzeit", className="card-title"),
@@ -98,7 +97,9 @@ card_total_test_time = dbc.Card(
     style={"width": "18rem"},
 )
 
+# Platzierung und Gestaltung des HTML-Layouts
 app.layout = html.Div(
+    # Ausrichtung der KAcheln in zwei Reihen mit Reihe 1 zu 3 Spalten und Reihe 2 zu 2 Spalten
     children=[
         dbc.Row([
             dbc.Col([card_max_speed], width=2),
@@ -109,9 +110,12 @@ app.layout = html.Div(
             dbc.Col([card_total_driving_length], width=2),
             dbc.Col([card_total_test_time], width=2)
         ], align='center'),
+        # Titel für die graphische Anzeige der Messsignale
         html.H2(id='titel',
                 children='Messsignale'),
+        
         html.Div(children='Wählen Sie ein anzuzeigendes Signal aus.'),
+        # Drop-Down Liste zur Auswahl des anzuzeigenden Mess-Signals
         dcc.Dropdown(id='dropdown',
                      options=[
                          {'label': 'Speed', 'value': 'Speed'},
@@ -120,6 +124,7 @@ app.layout = html.Div(
                          {'label': 'Steering angle', 'value': 'SteeringAngle'},
                      ],
                      value='SteeringAngle'),
+        # Erstellung des Graphen mit der ID: line_plot
         dcc.Graph(id='line_plot'),
         html.Br(),
         
@@ -127,7 +132,8 @@ app.layout = html.Div(
 )
 
 
-# Callback für den Plot als Ausgabe (siehe 'line_plot') und den Wert des Dropdown Menüs als Eingabe
+#  Reaktion in der App, sofern sich am Input Value etwas ändert
+# Darstellung des ausgewählten Mess-Signals aus der Drop-Down Liste
 @app.callback(Output(component_id='line_plot', component_property='figure'),
               [Input(component_id='dropdown', component_property='value')])
 def graph_update(value_of_input_component):
