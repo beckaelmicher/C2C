@@ -34,15 +34,15 @@ def main(modus):
     csv_dateipfad = 'messergebnisse.csv'
     mess_ergebnis = 0
 
-    def recording_panda_lists():
+    def recording_panda_lists(car):
         time = dt.now()
         time = time.timestamp()
         time_diff = time-time_alt
         list_time.append(dt.now().strftime("%H:%M:%S.%f")[:11])
         list_time_delta.append(round(time_diff, 5))
-        list_speed.append(sc.speed)
-        list_direction.append(sc.direction)
-        list_steeringangle.append(sc.steering_angle)
+        list_speed.append(car.speed)
+        list_direction.append(car.direction)
+        list_steeringangle.append(car.steering_angle)
         list_distance.append(abstand)
 
     def list_2_csv():
@@ -165,7 +165,7 @@ def main(modus):
                             no_obstacle = False
                             print("Hindernis")
                             sc.stop()
-                        recording_panda_lists()
+                        recording_panda_lists(sc)
 
                     list_2_csv()
 
@@ -198,7 +198,7 @@ def main(modus):
                             sc.stop()
                             sc.steering_angle = 90
                             hindernisse -= 1
-                        recording_panda_lists()
+                        recording_panda_lists(sc)
 
                     list_2_csv()
 
@@ -219,7 +219,7 @@ def main(modus):
                             schwellwert = data["IR_schwellwert"]
                     except:
                         print("Keine geeignete Datei config.json gefunden!")
-
+                
                     black_line = True
                     while black_line:
                         ls = irc.ir_werte
@@ -249,9 +249,11 @@ def main(modus):
                         if abstand < 15 and abstand > 0:            
                             print("Hindernis erkannt - halte an!")
                             irc.stop()
+                            recording_panda_lists(irc)
                             break
                         else:
                             irc.drive(30, 1)
+                            recording_panda_lists(irc)
                             ir_std = pd.Series(ls).std()
                             print("ir_std: ", ir_std)
                             ir_min = min(ls)
@@ -261,33 +263,42 @@ def main(modus):
                                 print("Kurve zu eng")
                                 # 1/2 Auto vorfahren
                                 irc.drive(20, 1)
+                                recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 irc.stop()
+                                recording_panda_lists(irc)
                                 time.sleep(0.1)
                                 #  Gegenwinkel lenken und 1/2 Auto zurück
                                 if min_val_idx == 0 or min_val_idx == 1:
                                     irc.steering_angle = 135
+                                    recording_panda_lists(irc)
                                 elif min_val_idx == 3 or min_val_idx == 4:
                                     irc.steering_angle = 45
+                                    recording_panda_lists(irc)
                                 irc.drive(30, -1)
+                                recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 continue
 
                             if (ls[2] < schwellwert) and (ls[3] < schwellwert) and (ls[4] < schwellwert):
                                 irc.steering_angle = 45
                                 irc.drive(30, -1)
+                                recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 irc.steering_angle = 135
                                 irc.drive(30, 1)
+                                recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 continue
 
                             if (ls[2] < schwellwert) and (ls[1] < schwellwert) and (ls[0] < schwellwert):
                                 irc.steering_angle = 135
                                 irc.drive(30, -1)
+                                recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 irc.steering_angle = 45
                                 irc.drive(30, 1)
+                                recording_panda_lists(irc)
                                 time.sleep(0.5)
                                 continue
 
@@ -297,7 +308,10 @@ def main(modus):
                                 black_line = False
                                 irc.steering_angle = 90
                                 irc.stop()
-                    irc.stop()   
+                                recording_panda_lists(irc)
+                    irc.stop()
+                    recording_panda_lists(irc)
+                    list_2_csv()   
                     print("Ende des Parcours.")
                     modus = None
                 else:
