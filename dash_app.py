@@ -61,13 +61,24 @@ app.layout = html.Div(
 @app.callback(
     Output('log', 'children'),
     [Input('start_val', 'n_clicks')], 
-    [Input('dropdown', 'value')],
+    [State('dropdown', 'value')],
     prevent_initial_call=True
 )
 def start_fahrparcours(n_clicks, value):
-    return value
-
-
+    if n_clicks > 0:
+        if value == "Speed":
+            # Rufe Methode x auf
+            return "Reaktion für Speed"
+        elif value == "Direction":
+            # Rufe Methode x auf 
+            return "Reaktion für Direction"
+        elif value == "Distance":
+            # Rufe Methode x auf 
+            return "Reaktion für Distance"
+        elif value == "Steering Angle": 
+            # Rufe Methode x auf
+            return "Reaktion für Steering Angle"
+        
 
 
 #  Reaktion in der App, sofern sich am Input Value etwas ändert
