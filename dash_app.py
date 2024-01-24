@@ -61,11 +61,12 @@ app.layout = html.Div(
 @app.callback(
     Output('log', 'children'),
     [Input('start_val', 'n_clicks')], 
-    [Input('dropdown', 'value')],
+    [State('dropdown', 'value')],
     prevent_initial_call=True
 )
 def start_fahrparcours(n_clicks, value):
-    return value
+    if n_clicks > 0:
+        return value
 
 
 
