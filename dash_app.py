@@ -59,6 +59,7 @@ app.layout = html.Div(
         # dcc.Graph(id='line_plot'),
         html.Br(),
         html.Div(id="log", children=''),
+        html.Div(id="log2", children=''),
     ]
 )
 
@@ -89,7 +90,7 @@ def start_fahrparcours(n_clicks, value):
 
 # Callback für Stop-Button
 @app.callback(
-    Output('log', 'children'),
+    Output('log2', 'children'),
     [Input('stop_val', 'n_clicks')], 
     prevent_initial_call=True
 )

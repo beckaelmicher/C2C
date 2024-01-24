@@ -51,6 +51,7 @@ def list_2_csv():
         "SteeringAngle": list_steeringangle,
         "Distance": list_distance
     })
+    global mess_ergebnis
     if mess_ergebnis == 0:
         # Neu angelegte CSV-Datei mit Header
         messergebnisse.to_csv(csv_dateipfad, index=False)    
