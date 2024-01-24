@@ -23,6 +23,7 @@ time_alt = time_alt.timestamp()
 csv_dateipfad = 'messergebnisse.csv'
 mess_ergebnis = 0
 abstand = 0
+fahren = False
 
 def recording_panda_lists(car):
     """Funktion zum Anhängen der Messdaten in den Listen
@@ -61,44 +62,53 @@ def list_2_csv():
         messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
 def fahrparcours_1():
-    try:
-        bc.drive(30, 1)
-        time.sleep(3)
-        bc.drive(0, 0)
-        time.sleep(1)
-        bc.drive(30, -1)
-        time.sleep(3)
-        bc.drive(0, 0)
-    except KeyboardInterrupt:
-        pass
+    global fahren
+    fahren = True
+    bc.drive(30, 1)
+    time.sleep(3)
+    if fahren == False:
+        return 
+    bc.drive(0, 0)
+    time.sleep(1)
+    if fahren == False:
+        return 
+    bc.drive(30, -1)
+    time.sleep(3)
+    bc.drive(0, 0)
+    fahren = False
 
 def stop():
+    global fahren
+    fahren = False
     list_2_csv()
     bc.stop()   # Fahrzeug anhalten
     bc.steering_angle = 90  # Lenkung gerade ausrichten
 
 def fahrparcours_3():
+    global fahren 
+    fahren = True
     no_obstacle = True
     sc.steering_angle = 90
 
     # Fahrfunktion asuführen, so lange kein Hindernis erkannt wird
-    while no_obstacle:
+    while no_obstacle and fahren:
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
         abstand = sc.abstand
         # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
         if abstand > 20 or abstand < 0:
-            print("Drive - Abstand =", abstand)
+            #print("Drive - Abstand =", abstand)
             sc.drive(40, 1)
         else:
-            print("Halt - Abstand = ", abstand)
+            #print("Halt - Abstand = ", abstand)
             no_obstacle = False
-            print("Hindernis erkannt!")
+            #print("Hindernis erkannt!")
             sc.stop()
         recording_panda_lists(sc)
 
     list_2_csv()
 
-    sc.stop()   
+    sc.stop() 
+    fahren = False  
  
 # def simulate_ctrl_c():
 #     keyboard.press_and_release('ctrl+c')

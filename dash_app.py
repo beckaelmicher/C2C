@@ -78,8 +78,8 @@ def start_fahrparcours(n_clicks, value):
             # Rufe Methode x auf 
             return "Reaktion für 2"
         elif value == "3":
-            # Rufe Methode x auf 
-            return "Reaktion für 3"
+            fpd.fahrparcours_3()
+            return "Fahrparcours 3 gestartet"
         elif value == "4": 
             # Rufe Methode x auf
             return "Reaktion für 4"
