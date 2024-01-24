@@ -61,16 +61,18 @@ def list_2_csv():
         messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
 def fahrparcours_1():
-    bc.drive(30, 1)
-    time.sleep(3)
-    bc.drive(0, 0)
-    time.sleep(1)
-    bc.drive(30, -1)
-    time.sleep(3)
-    bc.drive(0, 0)
+    try:
+        bc.drive(30, 1)
+        time.sleep(3)
+        bc.drive(0, 0)
+        time.sleep(1)
+        bc.drive(30, -1)
+        time.sleep(3)
+        bc.drive(0, 0)
+    except KeyboardInterrupt:
+        pass
 
 def stop():
-    
     list_2_csv()
     bc.stop()   # Fahrzeug anhalten
     bc.steering_angle = 90  # Lenkung gerade ausrichten
@@ -97,3 +99,10 @@ def fahrparcours_3():
     list_2_csv()
 
     sc.stop()   
+ 
+# def simulate_ctrl_c():
+#     keyboard.press_and_release('ctrl+c')
+ 
+# # Beispiel: Tastenkombination nach 3 Sekunden simulieren
+# time.sleep(3)
+# simulate_ctrl_c()

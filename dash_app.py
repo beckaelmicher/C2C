@@ -1,6 +1,5 @@
 import dash
-from dash import dcc, html, Input, Output, State, callback
-import plotly.express as px
+from dash import dcc, html, Input, Output, State, callback_context
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
@@ -97,6 +96,7 @@ def start_fahrparcours(n_clicks, value):
 def stop_fahrparcours(n_clicks):
     if n_clicks > 0:
         fpd.stop()
+        #keyboard.press_and_release('ctrl+c')
         return "Programm abgebrochen!"
 
 
@@ -121,6 +121,4 @@ if __name__ == '__main__':
     except:
         print("Keine geeignete Datei config.json gefunden!")
         app.run_server(debug=True)
-
-
 
