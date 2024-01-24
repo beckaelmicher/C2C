@@ -66,9 +66,19 @@ app.layout = html.Div(
 )
 def start_fahrparcours(n_clicks, value):
     if n_clicks > 0:
-        return value
-
-
+        if value == "Speed":
+            # Rufe Methode x auf
+            return "Reaktion für Speed"
+        elif value == "Direction":
+            # Rufe Methode x auf 
+            return "Reaktion für Direction"
+        elif value == "Distance":
+            # Rufe Methode x auf 
+            return "Reaktion für Distance"
+        elif value == "Steering Angle": 
+            # Rufe Methode x auf
+            return "Reaktion für Steering Angle"
+        
 
 
 #  Reaktion in der App, sofern sich am Input Value etwas ändert
