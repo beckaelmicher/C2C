@@ -73,19 +73,19 @@ def start_fahrparcours(n_clicks, value):
     if n_clicks > 0:
         if value == "1":
             fpd.fahrparcours_1()
-            return "Fahrparcours 1 gestartet."
+            return "Fahrparcours 1 beendet."
         elif value == "2":
-            # Rufe Methode x auf 
-            return "Reaktion für 2"
+            fpd.fahrparcours_2()
+            return "Fahrparcours 2 beendet"
         elif value == "3":
             fpd.fahrparcours_3()
-            return "Fahrparcours 3 gestartet"
+            return "Fahrparcours 3 beendet"
         elif value == "4": 
-            # Rufe Methode x auf
-            return "Reaktion für 4"
+            fpd.fahrparcours_4()
+            return "Fahrparcours 4 beendet"
         elif value == "5": 
-            # Rufe Methode x auf
-            return "Reaktion für 5"
+            fpd.fahrparcours_5()
+            return "Fahrparcours 5 beendet"
 
 # Callback für Stop-Button
 @app.callback(
