@@ -22,6 +22,7 @@ time_alt = dt.now()
 time_alt = time_alt.timestamp()
 csv_dateipfad = 'messergebnisse.csv'
 mess_ergebnis = 0
+abstand = 0
 
 def recording_panda_lists(car):
     """Funktion zum Anhängen der Messdaten in den Listen
@@ -50,9 +51,6 @@ def list_2_csv():
         "SteeringAngle": list_steeringangle,
         "Distance": list_distance
     })
-    # "mess_ergebnis" muss nochmal als global definiert werden, 
-    # damit es nicht als lokale Variabe in folgender Abfrage angelegt wird
-    nonlocal mess_ergebnis
     if mess_ergebnis == 0:
         # Neu angelegte CSV-Datei mit Header
         messergebnisse.to_csv(csv_dateipfad, index=False)    
@@ -62,7 +60,6 @@ def list_2_csv():
         messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
 def fahrparcours_1():
-    print('Fahrparcours 1')
     bc.drive(30, 1)
     time.sleep(3)
     bc.drive(0, 0)
@@ -70,4 +67,32 @@ def fahrparcours_1():
     bc.drive(30, -1)
     time.sleep(3)
     bc.drive(0, 0)
-    print("Ende des Parcours.")
+
+def stop():
+    
+    list_2_csv()
+    bc.stop()   # Fahrzeug anhalten
+    bc.steering_angle = 90  # Lenkung gerade ausrichten
+
+def fahrparcours_3():
+    no_obstacle = True
+    sc.steering_angle = 90
+
+    # Fahrfunktion asuführen, so lange kein Hindernis erkannt wird
+    while no_obstacle:
+        # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
+        abstand = sc.abstand
+        # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
+        if abstand > 20 or abstand < 0:
+            print("Drive - Abstand =", abstand)
+            sc.drive(40, 1)
+        else:
+            print("Halt - Abstand = ", abstand)
+            no_obstacle = False
+            print("Hindernis erkannt!")
+            sc.stop()
+        recording_panda_lists(sc)
+
+    list_2_csv()
+
+    sc.stop()   
