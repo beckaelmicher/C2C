@@ -22,7 +22,6 @@ time_alt = dt.now()
 time_alt = time_alt.timestamp()
 csv_dateipfad = 'messergebnisse.csv'
 mess_ergebnis = 0
-abstand = 0
 fahren = False
 
 def recording_panda_lists(car):
@@ -39,7 +38,7 @@ def recording_panda_lists(car):
     list_speed.append(car.speed)
     list_direction.append(car.direction)
     list_steeringangle.append(car.steering_angle)
-    list_distance.append(abstand)
+    list_distance.append(car.abstand)   # Das Logging des Abstands funktioniert so nicht (ist immer 0)
 
 def list_2_csv():
     """Funktion zum Schreiben der Messergebnisse aus den Listen in die CSV-Datei mittels Pandas
@@ -61,22 +60,6 @@ def list_2_csv():
         # In vorhandener CSV-Datei anhängen mit mode="a" (append) und ohne Header
         messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
-def fahrparcours_1():
-    global fahren
-    fahren = True
-    bc.drive(30, 1)
-    time.sleep(3)
-    if fahren == False:
-        return 
-    bc.drive(0, 0)
-    time.sleep(1)
-    if fahren == False:
-        return 
-    bc.drive(30, -1)
-    time.sleep(3)
-    bc.drive(0, 0)
-    fahren = False
-
 def stop():
     global fahren
     fahren = False
@@ -84,11 +67,33 @@ def stop():
     bc.stop()   # Fahrzeug anhalten
     bc.steering_angle = 90  # Lenkung gerade ausrichten
 
+def fahrparcours_1():
+    global fahren
+    fahren = True
+    bc.drive(30, 1)
+    time.sleep(3)
+    recording_panda_lists(bc)
+    if fahren == False:
+        return 
+    bc.drive(0, 0)
+    time.sleep(1)
+    recording_panda_lists(bc)
+    if fahren == False:
+        return 
+    bc.drive(30, -1)
+    time.sleep(3)
+    recording_panda_lists(bc)
+    bc.drive(0, 0)
+    recording_panda_lists(bc)
+    list_2_csv()
+    fahren = False
+
 def fahrparcours_2():
     global fahren
     fahren = True
     bc.steering_angle = 90
     bc.drive(30, 1)
+    recording_panda_lists(bc)
     time.sleep(1)
     if fahren == False:
         return 
@@ -97,28 +102,38 @@ def fahrparcours_2():
     if fahren == False:
         return 
     bc.drive(0, 0)
+    recording_panda_lists(bc)
     bc.drive(30, -1)
     time.sleep(8)
+    recording_panda_lists(bc)
     if fahren == False:
         return 
     bc.steering_angle = 90
     time.sleep(1)
+    recording_panda_lists(bc)
     bc.drive(0, 0)
     time.sleep(.5)
+    recording_panda_lists(bc)
     bc.drive(30, 1)
     time.sleep(1)
+    recording_panda_lists(bc)
     if fahren == False:
         return 
     bc.steering_angle = 45
     time.sleep(8)
+    recording_panda_lists(bc)
     bc.drive(0, 0)
     bc.drive(30, -1)
     time.sleep(8)
+    recording_panda_lists(bc)
     if fahren == False:
         return 
     bc.steering_angle = 90
     time.sleep(1)
+    recording_panda_lists(bc)
     bc.drive(0, 0)
+    recording_panda_lists(bc)
+    list_2_csv()
     fahren = False
 
 def fahrparcours_3():
@@ -133,7 +148,7 @@ def fahrparcours_3():
         abstand = sc.abstand
         # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
         if abstand > 20 or abstand < 0:
-            #print("Drive - Abstand =", abstand)
+            print("Drive - Abstand =", abstand)
             sc.drive(40, 1)
         else:
             #print("Halt - Abstand = ", abstand)
@@ -143,7 +158,6 @@ def fahrparcours_3():
         recording_panda_lists(sc)
 
     list_2_csv()
-
     sc.stop() 
     fahren = False  
 
@@ -311,9 +325,3 @@ def fahrparcours_5():
     list_2_csv() 
     fahren = False  
  
-# def simulate_ctrl_c():
-#     keyboard.press_and_release('ctrl+c')
- 
-# # Beispiel: Tastenkombination nach 3 Sekunden simulieren
-# time.sleep(3)
-# simulate_ctrl_c()
