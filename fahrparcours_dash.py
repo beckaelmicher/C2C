@@ -153,6 +153,7 @@ def fahrparcours_4():
     sc.steering_angle = 90
     while fahren:
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
+        global abstand
         abstand = sc.abstand
         # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
         if abstand > 20 or abstand < 0:
@@ -215,6 +216,7 @@ def fahrparcours_5():
             irc.steering_angle = 90
 
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
+        global abstand
         abstand = irc.abstand
         # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
         if abstand < 15 and abstand > 0:            
