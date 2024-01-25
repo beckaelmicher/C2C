@@ -1,17 +1,29 @@
+"""Die Datei "fahrparcours_dash.py" enthält die Funktionen zum Steuern des Raspberry-Cars für die Verwendung in der Dash-App (dash_app.py).
+
+Methoden:
+    - recording_panda_lists(car):   Füllen der Listen für die spätere Verwendung in Panda-Dataframe.
+    - list_2_csv():                 Listen in Pandas Dataframe inkl. Speichern als CSV-Datei.
+    - stop():                       Funktion zum Stoppen des Fahrzeugs
+    - fahrparcours_1():             Vorwärts- und Rückwärtsfahren
+    - fahrparcours_2():             Kreisfahrt mit maximalem Lenkwinkel
+    - fahrparcours_3():             Vorwärtsfahrt bis Hindernis
+    - fahrparcours_4():             Erkundungstour (Fahren mit Rückwärtsausweichen bei Hindernis)
+    - fahrparcours_5():             Erweiterte Linienverfolgung mit Hinderniserkennung
+"""
 from ir_car import *
-import click
 from datetime import datetime as dt
 import time
 import pandas as pd
 import random
 import json
 
+
 # Anlegen der benötigten Instanzen
 bc = BaseCar()  # Fahrparcours 1 und 2
 sc = SonicCar() # Fahrparcours 3 und 4
 irc = IRCar()   # Fahrparcours 5 (bis 7)
 
-# Anlegen der Listen ausgelagert, damit die Messung per Methode aufrufbar ist
+# Anlegen der Listen und globalen Variablen, damit sie in den Methoden verwendbar sind
 list_timestamp = []
 list_time = []
 list_speed = []
@@ -23,8 +35,8 @@ time_alt = time_alt.timestamp()
 csv_dateipfad = 'messergebnisse.csv'
 mess_ergebnis = 0
 abstand = 0
+# Variable "fahren" wird verwendet, um Fahrparcours zwischendrin unterbrechen zu können.
 fahren = False
-text_speicher = "Test"
 
 def recording_panda_lists(car):
     """Funktion zum Anhängen der Messdaten in den Listen
@@ -40,7 +52,7 @@ def recording_panda_lists(car):
     list_speed.append(car.speed)
     list_direction.append(car.direction)
     list_steeringangle.append(car.steering_angle)
-    list_distance.append(abstand)   # Aufzeichnen des Abstands funktioniert so noch nicht (ist immer 0)
+    list_distance.append(abstand)
 
 def list_2_csv():
     """Funktion zum Schreiben der Messergebnisse aus den Listen in die CSV-Datei mittels Pandas
@@ -63,15 +75,18 @@ def list_2_csv():
         messergebnisse.to_csv(csv_dateipfad, index=False, mode="a", header=False)
 
 def stop():
+    """Funktion zum Stoppen des Fahrzeugs
+    """
     global fahren
     fahren = False
-    # list_2_csv()
-    bc.stop()   # Fahrzeug anhalten
-    bc.steering_angle = 90  # Lenkung gerade ausrichten
+    # Fahrzeug anhalten
+    bc.stop()
+    # Lenkung gerade ausrichten
+    bc.steering_angle = 90  
 
 def fahrparcours_1():
-    global text_speicher
-    text_speicher = "FP1 gestartet"
+    """Funktion zum Ausführen von Fahrparcours 1
+    """
     global fahren
     fahren = True
     bc.drive(30, 1)
@@ -86,9 +101,10 @@ def fahrparcours_1():
     time.sleep(3)
     bc.drive(0, 0)
     fahren = False
-    text_speicher = "FP2 beendet"
-
+    
 def fahrparcours_2():
+    """Funktion zum Ausführen von Fahrparcours 2
+    """
     global fahren
     fahren = True
     bc.steering_angle = 90
@@ -126,12 +142,14 @@ def fahrparcours_2():
     fahren = False
 
 def fahrparcours_3():
+    """Funktion zum Ausführen von Fahrparcours 3
+    """
     global fahren 
     fahren = True
     no_obstacle = True
     sc.steering_angle = 90
 
-    # Fahrfunktion asuführen, so lange kein Hindernis erkannt wird
+    # Fahrfunktion ausführen, so lange kein Hindernis erkannt wird
     while no_obstacle and fahren:
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
         global abstand
@@ -149,11 +167,12 @@ def fahrparcours_3():
         recording_panda_lists(sc)
 
     list_2_csv()
-
     sc.stop() 
     fahren = False  
 
 def fahrparcours_4():
+    """Funktion zum Ausführen von Fahrparcours 4
+    """
     global fahren 
     fahren = True
     sc.steering_angle = 90
@@ -182,6 +201,8 @@ def fahrparcours_4():
     fahren = False   
 
 def fahrparcours_5():
+    """Funktion zum Ausführen von Fahrparcours 5
+    """
     global fahren 
     fahren = True
     # Einlesen eines individuellen Schwellwertes aus config-Datei
@@ -200,7 +221,7 @@ def fahrparcours_5():
         # print("--"*20)
         # print("IR-Werte: ", ls)
 
-        # Ermittlung des Minimalwerts und des zugehörigen List-Indexes (für den einzelen Sensor)
+        # Ermittlung des Minimalwerts und des zugehörigen List-Indexes (für den einzelnen Sensor)
         min_val = ls[0]
         min_val_idx = 0
         for i in range (len(ls)):
@@ -208,7 +229,7 @@ def fahrparcours_5():
                 min_val = ls[i]
                 min_val_idx = i
                     
-        # Abfrage ob äußere Sensoren die Linie erkannt haben, um direkt stark zu lenken
+        # Abfrage ob äußere Sensoren die Linie erkannt haben, um direkt stark zu Lenken
         if min_val_idx == 0:
             irc.steering_angle = 45
         elif min_val_idx == 4:

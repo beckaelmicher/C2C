@@ -1,3 +1,13 @@
+"""Die Datei "dash_app.py" öffnet eine HTML-Seite, um per Dash das Steuern des Raspberry-Cars zu können.
+
+Funktionalität:
+    - Auswahl des gewünschten Fahrparcours aus Dropdown-Liste mit Möglichkeit zum Starten dieser mittels Start-Button.
+    
+    - Das PiCar kann mittels des Stop-Buttons jederzeit angehalten werden.
+    
+    - Mittels einer weiteren Dropdown-Liste kann nach dem Fahren aus der erzeugten Messdatei ein Messsignal zum Darstellen in einem Graphen verwendet werden.
+
+"""
 import dash
 from dash import dcc, html, Input, Output, State, ctx
 from dash.dependencies import Input, Output
@@ -6,24 +16,22 @@ import pandas as pd
 import json
 import plotly.express as px
 import fahrparcours_dash as fpd
-import time
+
 
 # Verwendung von externen Stylesheets 
 app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
 
 # Platzierung und Gestaltung des HTML-Layouts
 app.layout = html.Div(
-    # Ausrichtung der Kacheln in zwei Reihen mit Reihe 1 zu 3 Spalten und Reihe 2 zu 2 Spalten
     children=[
-        html.H1(id='titel',
-                    children='PiCar App'),
+        html.H1(id='titel', children='PiCar App'),
         html.Br(),
         html.H3(id='titel1', children='Auswahl der Fahrfunktionen'),
         dbc.Row([
             dbc.Col([
                 html.Div(children='Wählen Sie den gewünschten Fahrparcours aus:'),
                 html.Br(),
-                 # Drop-Down Liste zur Auswahl des anzuzeigenden Mess-Signals
+                 # Drop-Down Liste zur Auswahl des Fahrparcours
                 dcc.Dropdown(id='dropdown',
                      options=[
                          {'label': 'Fahrparcours 1 - Vorwärts und Rückwärts', 'value': '1'},
@@ -34,7 +42,7 @@ app.layout = html.Div(
                      ],
                      value='1'),
             ], align='center'),
-            
+            # Start-/ Stop-Button für Ausführen und Stoppen des Fahrparcours eingefügt
             dbc.Col([
                 html.Button('Start', id='start_button', n_clicks=0),
                 html.Br(),
@@ -44,9 +52,9 @@ app.layout = html.Div(
         ], align='center'),
 
         html.Br(),
-        html.Div(id="log", children=fpd.text_speicher),
+        html.Div(id="log", children=''),
         html.Br(),
-         html.H3(id='titel2', children='Anzeige des Loggings'),
+        html.H3(id='titel2', children='Anzeige des Loggings'),
         html.Div(children='Wählen Sie ein anzuzeigendes Signal aus:'),
         # Drop-Down Liste zur Auswahl des anzuzeigenden Mess-Signals
         dcc.Dropdown(id='dropdown2',
@@ -67,6 +75,8 @@ app.layout = html.Div(
 )
 
 # Callback für Start-/Stop-Button
+# Methode zum Starten des gewählten Fahrparcours und der Stop-Methode
+# ctx Bibliothek zum Prüfen des gedrückten Buttons verwendet
 @app.callback(
     Output('log', 'children'),
     [Input('start_button', 'n_clicks')], 
@@ -79,7 +89,7 @@ def start_fahrparcours(start_button, stop_button, value):
     if button_id == "start_button":
         if value == "1":
             fpd.fahrparcours_1()
-            return fpd.text_speicher
+            return "Fahrparcours 1 beendet"
         elif value == "2":
             fpd.fahrparcours_2()
             return "Fahrparcours 2 beendet"
@@ -96,7 +106,6 @@ def start_fahrparcours(start_button, stop_button, value):
         fpd.stop()
         return "Programm abgebrochen!"
 
-# Reaktion in der App, sofern sich am Input Value etwas ändert
 # Darstellung des ausgewählten Mess-Signals aus der Drop-Down Liste
 @app.callback(
     Output(component_id='line_plot', component_property='figure'),
@@ -122,4 +131,3 @@ if __name__ == '__main__':
     except:
         print("Keine geeignete Datei config.json gefunden!")
         app.run_server(debug=True)
-
