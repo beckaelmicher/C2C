@@ -1,11 +1,12 @@
 import dash
-from dash import dcc, html, Input, Output, State, callback_context
+from dash import dcc, html, Input, Output, State, ctx
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 import json
 import plotly.express as px
 import fahrparcours_dash as fpd
+import time
 
 # Verwendung von externen Stylesheets 
 app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
@@ -35,16 +36,15 @@ app.layout = html.Div(
             ], align='center'),
             
             dbc.Col([
-                html.Button('Start', id='start_val', n_clicks=0),
+                html.Button('Start', id='start_button', n_clicks=0),
                 html.Br(),
                 html.Br(),
-                html.Button('Stop', id='stop_val', n_clicks=0),
+                html.Button('Stop', id='stop_button', n_clicks=0),
             ]),
         ], align='center'),
 
         html.Br(),
-        html.Div(id="log", children=''),
-        html.Div(id="log2", children=''),
+        html.Div(id="log", children=fpd.text_speicher),
         html.Br(),
          html.H3(id='titel2', children='Anzeige des Loggings'),
         html.Div(children='Wählen Sie ein anzuzeigendes Signal aus:'),
@@ -59,21 +59,27 @@ app.layout = html.Div(
                      value='SteeringAngle'),
         # Erstellung des Graphen mit der ID: line_plot
         dcc.Graph(id='line_plot'),
-    ]
+    ], style={
+        "backgroundColor": "#DDDDDD",
+        "maxWidth": "1000px",
+        "padding":"20px 30px 40px",
+        }
 )
 
-# Callback für Start-Button
+# Callback für Start-/Stop-Button
 @app.callback(
     Output('log', 'children'),
-    [Input('start_val', 'n_clicks')], 
+    [Input('start_button', 'n_clicks')], 
+    [Input('stop_button', 'n_clicks')], 
     [State('dropdown', 'value')],
     prevent_initial_call=True
 )
-def start_fahrparcours(n_clicks, value):
-    if n_clicks > 0:
+def start_fahrparcours(start_button, stop_button, value):
+    button_id = ctx.triggered_id if not None else 'No clicks yet'
+    if button_id == "start_button":
         if value == "1":
             fpd.fahrparcours_1()
-            return "Fahrparcours 1 beendet"
+            return fpd.text_speicher
         elif value == "2":
             fpd.fahrparcours_2()
             return "Fahrparcours 2 beendet"
@@ -86,18 +92,9 @@ def start_fahrparcours(n_clicks, value):
         elif value == "5": 
             fpd.fahrparcours_5()
             return "Fahrparcours 5 beendet"
-
-# Callback für Stop-Button
-@app.callback(
-    Output('log2', 'children'),
-    [Input('stop_val', 'n_clicks')], 
-    prevent_initial_call=True
-)
-def stop_fahrparcours(n_clicks):
-    if n_clicks > 0:
+    elif button_id == "stop_button":
         fpd.stop()
         return "Programm abgebrochen!"
-
 
 # Reaktion in der App, sofern sich am Input Value etwas ändert
 # Darstellung des ausgewählten Mess-Signals aus der Drop-Down Liste

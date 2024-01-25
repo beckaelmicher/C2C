@@ -24,6 +24,7 @@ csv_dateipfad = 'messergebnisse.csv'
 mess_ergebnis = 0
 abstand = 0
 fahren = False
+text_speicher = "Test"
 
 def recording_panda_lists(car):
     """Funktion zum Anhängen der Messdaten in den Listen
@@ -69,6 +70,8 @@ def stop():
     bc.steering_angle = 90  # Lenkung gerade ausrichten
 
 def fahrparcours_1():
+    global text_speicher
+    text_speicher = "FP1 gestartet"
     global fahren
     fahren = True
     bc.drive(30, 1)
@@ -83,6 +86,7 @@ def fahrparcours_1():
     time.sleep(3)
     bc.drive(0, 0)
     fahren = False
+    text_speicher = "FP2 beendet"
 
 def fahrparcours_2():
     global fahren
