@@ -64,7 +64,7 @@ def list_2_csv():
 def stop():
     global fahren
     fahren = False
-    list_2_csv()
+    # list_2_csv()
     bc.stop()   # Fahrzeug anhalten
     bc.steering_angle = 90  # Lenkung gerade ausrichten
 
@@ -136,6 +136,7 @@ def fahrparcours_3():
         if abstand > 20 or abstand < 0:
             #print("Drive - Abstand =", abstand)
             sc.drive(40, 1)
+            recording_panda_lists(sc)
         else:
             #print("Halt - Abstand = ", abstand)
             no_obstacle = False
@@ -167,6 +168,7 @@ def fahrparcours_4():
             # Zufällige Auswahl vollständiger Lenkeinschlag nach links oder rechts
             sc.steering_angle = random.choice([45, 135])
             sc.drive(30, -1)
+            recording_panda_lists(sc)
             time.sleep(2)
             sc.stop()
             sc.steering_angle = 90            
