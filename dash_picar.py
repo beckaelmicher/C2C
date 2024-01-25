@@ -1,4 +1,12 @@
 
+"""Die Datei "dash_picarp.py" öffnet eine HTML-Seite, um per Dash die aufgezeichneten Fahrdaten zu visualisieren.
+
+Funktionalität:
+    - Anzeige der Werte Minimal-, Durchschnitts- und Höchstgeschwindigkeit Sowie Gesamtstrecke und -testzeit in KAcheln
+
+    - Mittels einer weiteren Dropdown-Liste kann aus der Messdatei ein Messsignal zum Darstellen in einem Graphen verwendet werden.
+
+"""
 import dash
 from dash import dcc
 from dash import html
@@ -70,7 +78,7 @@ card_total_driving_length = dbc.Card(
         dbc.CardImg(src="/static/images/track.png", style={'height':150, 'width':150}, top=True),
         dbc.CardBody(
             [
-                html.H4("Gesamtfahrstrecke", className="card-title"),
+                html.H4("Gesamtstrecke", className="card-title"),
                 html.P(
                     str(round(df["Speed"].mean() * (max(df["Time"])-min(df["Time"])), 2)) + " cm",
                     className="card-text",
@@ -99,19 +107,21 @@ card_total_test_time = dbc.Card(
 
 # Platzierung und Gestaltung des HTML-Layouts
 app.layout = html.Div(
-    # Ausrichtung der KAcheln in zwei Reihen mit Reihe 1 zu 3 Spalten und Reihe 2 zu 2 Spalten
     children=[
+        html.H1(id='titel', children='PiCar Dashboard'),
+        html.Br(),
+        # Anordnung der Kacheln in einer Reihe
         dbc.Row([
-            dbc.Col([card_max_speed], width=2),
             dbc.Col([card_min_speed], width=2),
             dbc.Col([card_avg_speed], width=2),
+            dbc.Col([card_max_speed], width=2),
             dbc.Col([card_total_driving_length], width=2),
             dbc.Col([card_total_test_time], width=2)
         ], align='center'),
+        html.Br(),
         # Titel für die graphische Anzeige der Messsignale
-        html.H2(id='titel',
-                children='Messsignale'),
-        
+        html.H2(id='titel1', children='Messsignale'),
+        html.Br(),
         html.Div(children='Wählen Sie ein anzuzeigendes Signal aus.'),
         # Drop-Down Liste zur Auswahl des anzuzeigenden Mess-Signals
         dcc.Dropdown(id='dropdown',
@@ -126,11 +136,13 @@ app.layout = html.Div(
         dcc.Graph(id='line_plot'),
         html.Br(),
         
-    ]
+    ], style={
+        "backgroundColor": "#DDDDDD",
+        "maxWidth": "1100px",
+        "padding":"20px 30px 40px",
+        }
 )
 
-
-#  Reaktion in der App, sofern sich am Input Value etwas ändert
 # Darstellung des ausgewählten Mess-Signals aus der Drop-Down Liste
 @app.callback(Output(component_id='line_plot', component_property='figure'),
               [Input(component_id='dropdown', component_property='value')])
