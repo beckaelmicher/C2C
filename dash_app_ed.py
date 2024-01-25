@@ -17,9 +17,10 @@ app.layout = html.Div(
         html.H1(id='titel',
                     children='PiCar App'),
         html.Br(),
+        html.H3(id='titel1', children='Auswahl der Fahrfunktionen'),
         dbc.Row([
             dbc.Col([
-                html.Div(children='Wählen Sie den gewünschten Fahrparcours aus.'),
+                html.Div(children='Wählen Sie den gewünschten Fahrparcours aus:'),
                 html.Br(),
                  # Drop-Down Liste zur Auswahl des anzuzeigenden Mess-Signals
                 dcc.Dropdown(id='dropdown',
@@ -45,7 +46,8 @@ app.layout = html.Div(
         html.Div(id="log", children=''),
         html.Div(id="log2", children=''),
         html.Br(),
-        html.Div(children='Wählen Sie ein anzuzeigendes Signal aus.'),
+         html.H3(id='titel2', children='Anzeige des Loggings'),
+        html.Div(children='Wählen Sie ein anzuzeigendes Signal aus:'),
         # Drop-Down Liste zur Auswahl des anzuzeigenden Mess-Signals
         dcc.Dropdown(id='dropdown2',
                       options=[
@@ -99,8 +101,11 @@ def stop_fahrparcours(n_clicks):
 
 # Reaktion in der App, sofern sich am Input Value etwas ändert
 # Darstellung des ausgewählten Mess-Signals aus der Drop-Down Liste
-@app.callback(Output(component_id='line_plot', component_property='figure'),
-              [Input(component_id='dropdown2', component_property='value')])
+@app.callback(
+    Output(component_id='line_plot', component_property='figure'),
+    [Input(component_id='dropdown2', component_property='value')],
+    prevent_initial_call=True
+)
 def graph_update(value_of_input_component):
     # Einlesen der CSV-Datei mit den Messergebnissen in ein Pandas Dataframe
     df = pd.read_csv("messergebnisse.csv")
