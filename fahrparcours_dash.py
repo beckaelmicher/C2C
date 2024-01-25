@@ -130,6 +130,7 @@ def fahrparcours_3():
     # Fahrfunktion asuführen, so lange kein Hindernis erkannt wird
     while no_obstacle and fahren:
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
+        global abstand
         abstand = sc.abstand
         # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
         if abstand > 20 or abstand < 0:
