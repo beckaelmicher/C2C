@@ -12,7 +12,7 @@ class BaseCar(object):
     def __init__(self) -> None:
         # # Einlesen der individuellen Lenkrad-Einstellung
         try:
-            with open("..\config.json", "r") as f:
+            with open("config.json", "r") as f:
                 data = json.load(f)
                 turning_offset = data["turning_offset"]
                 # forward_A = data["forward_A"]
