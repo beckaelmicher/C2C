@@ -72,7 +72,7 @@ app = Dash(__name__, server=server)
 @server.route("/video_feed")
 def video_feed():
     return Response(
-        result = fpd.camcar.stream() ,
+        fpd.camcar.stream() ,
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
