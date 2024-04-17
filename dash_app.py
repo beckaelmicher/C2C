@@ -8,18 +8,73 @@ Funktionalität:
     - Mittels einer weiteren Dropdown-Liste kann nach dem Fahren aus der erzeugten Messdatei ein Messsignal zum Darstellen in einem Graphen verwendet werden.
 
 """
-import dash
-from dash import dcc, html, Input, Output, State, ctx
+from dash import dcc, Dash, html, Input, Output, State, ctx
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 import json
 import plotly.express as px
 import fahrparcours_dash as fpd
-
+from flask import Flask, Response
+import cv2
 
 # Verwendung von externen Stylesheets 
-app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
+app = Dash(external_stylesheets=[dbc.themes.LUMEN])
+
+from basisklassen_cam import Camera
+
+# Expliztes Anlegen eines Flask-Servers
+server = Flask(__name__)
+# Erzeugen des Dash-Objektes unter Verwendung des Flask-Servers
+app = Dash(__name__, server=server)
+
+my_camera = Camera(flip=True, height=480, width=640)
+
+# Folgender Generator gibt beim Aufruf den Byte des Bildes in JPG zurück
+# Es wird die Klasse Camera aus basisklassen_cam.py verwendet.
+def generate_camera_image(camera):
+    # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
+    frame = camera.get_frame()
+    # Einige beipielhafte Manipulationen des Bildes
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # canny = cv2.Canny(gray, 100, 200)
+    frame = gray
+    frame = frame[200:480,0:640].copy()
+    imgTemplate = frame[100:170,50:570].copy()
+    while True:
+        # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
+        frame = camera.get_frame()
+        # Einige beipielhafte Manipulationen des Bildes
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # canny = cv2.Canny(gray, 100, 200)
+        frame = gray
+        frame = frame[200:480,0:640].copy()
+        res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        top_left = min_loc
+
+        #-------------------------
+        # Zeichnen der Boundary Box
+        ht,wt = imgTemplate.shape
+        bottom_right = (top_left[0] + wt, top_left[1] + ht)
+        img3=cv2.rectangle(frame.copy(), top_left, bottom_right, (255,0,0), 3)
+
+        # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
+        _, x = cv2.imencode(".jpeg", img3)
+        x_bytes = x.tobytes()
+
+        yield (
+            b"--frame\r\n" + b"Content-Type: image/jpeg\r\n\r\n" + x_bytes + b"\r\n\r\n"
+        )
+
+# Anlegen eines Endpunkte für einen Videostream /video_feed
+# Dieser Endpunkt ist in der App ebenfalls erreichbar.
+@server.route("/video_feed")
+def video_feed():
+    return Response(
+        generate_camera_image(my_camera),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
 
 # Platzierung und Gestaltung des HTML-Layouts
 app.layout = html.Div(
@@ -50,7 +105,15 @@ app.layout = html.Div(
                 html.Button('Stop', id='stop_button', n_clicks=0),
             ]),
         ], align='center'),
-
+        html.Br(),
+        dbc.Row([
+            dbc.Col([
+                # Einbinden eines Bildes, welches auf den Videofeed verweist.
+                # Entsprechend wird das Bild kontinuierlich aktualisiert.
+                html.Div([html.Img(src="/video_feed")])
+            
+            ], align='center'),
+        ], align='center'),
         html.Br(),
         html.Div(id="log", children=''),
         html.Br(),
@@ -127,7 +190,7 @@ if __name__ == '__main__':
         with open("config.json", "r") as f:
             data = json.load(f)
             raspberry_ip = data["raspberry_ip"]
-            app.run_server(host = raspberry_ip, port=8080, debug=True)
+            app.run_server(host = raspberry_ip, port=8080, debug=False)
     except:
         print("Keine geeignete Datei config.json gefunden!")
-        app.run_server(debug=True)
+        app.run_server(debug=False)
