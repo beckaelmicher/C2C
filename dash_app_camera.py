@@ -23,11 +23,19 @@ server = Flask(__name__)
 # Erzeugen des Dash-Objektes unter Verwendung des Flask-Servers
 app = Dash(__name__, server=server)
 
-my_camera = Camera(flip=False, height=480, width=640)
+my_camera = Camera(flip=True, height=480, width=640)
 
 # Folgender Generator gibt beim Aufruf den Byte des Bildes in JPG zurück
 # Es wird die Klasse Camera aus basisklassen_cam.py verwendet.
 def generate_camera_image(camera):
+    # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
+    frame = camera.get_frame()
+    # Einige beipielhafte Manipulationen des Bildes
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # canny = cv2.Canny(gray, 100, 200)
+    frame = gray
+    frame = frame[200:480,0:640].copy()
+    imgTemplate = frame[100:170,50:570].copy()
     while True:
         # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
         frame = camera.get_frame()
@@ -35,13 +43,19 @@ def generate_camera_image(camera):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # canny = cv2.Canny(gray, 100, 200)
         frame = gray
-
-        threshold=100
-        ret,frame = cv2.threshold(frame, threshold, 1, cv2.THRESH_BINARY)   # gibt threshold und Resultat zurück
         frame = frame[200:480,0:640].copy()
+        res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        top_left = min_loc
+
+        #-------------------------
+        # Zeichnen der Boundary Box
+        ht,wt = imgTemplate.shape
+        bottom_right = (top_left[0] + wt, top_left[1] + ht)
+        img3=cv2.rectangle(frame.copy(), top_left, bottom_right, (255,0,0), 3)
 
         # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
-        _, x = cv2.imencode(".jpeg", frame)
+        _, x = cv2.imencode(".jpeg", img3)
         x_bytes = x.tobytes()
 
         yield (
