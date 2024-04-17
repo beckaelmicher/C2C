@@ -16,63 +16,63 @@ import json
 import plotly.express as px
 import fahrparcours_dash as fpd
 from flask import Flask, Response
-import cv2
+# import cv2
 
 # Verwendung von externen Stylesheets 
 app = Dash(external_stylesheets=[dbc.themes.LUMEN])
 
-from basisklassen_cam import Camera
+# from basisklassen_cam import Camera
 
 # Expliztes Anlegen eines Flask-Servers
 server = Flask(__name__)
 # Erzeugen des Dash-Objektes unter Verwendung des Flask-Servers
 app = Dash(__name__, server=server)
 
-my_camera = Camera(flip=True, height=480, width=640)
+# my_camera = Camera(flip=True, height=480, width=640)
 
 # Folgender Generator gibt beim Aufruf den Byte des Bildes in JPG zurück
 # Es wird die Klasse Camera aus basisklassen_cam.py verwendet.
-def generate_camera_image(camera):
-    # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
-    frame = camera.get_frame()
-    # Einige beipielhafte Manipulationen des Bildes
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # canny = cv2.Canny(gray, 100, 200)
-    frame = gray
-    frame = frame[200:480,0:640].copy()
-    imgTemplate = frame[100:170,50:570].copy()
-    while True:
-        # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
-        frame = camera.get_frame()
-        # Einige beipielhafte Manipulationen des Bildes
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # canny = cv2.Canny(gray, 100, 200)
-        frame = gray
-        frame = frame[200:480,0:640].copy()
-        res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        top_left = min_loc
+# def generate_camera_image(camera):
+#     # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
+#     frame = camera.get_frame()
+#     # Einige beipielhafte Manipulationen des Bildes
+#     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#     # canny = cv2.Canny(gray, 100, 200)
+#     frame = gray
+#     frame = frame[150:350,0:640].copy()
+#     imgTemplate = frame[100:170,50:570].copy()
+#     while True:
+#         # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
+#         frame = camera.get_frame()
+#         # Einige beipielhafte Manipulationen des Bildes
+#         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#         # canny = cv2.Canny(gray, 100, 200)
+#         frame = gray
+#         frame = frame[200:480,0:640].copy()
+#         res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
+#         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+#         top_left = min_loc
+#         fpd.x_position = top_left[0]
+#         #-------------------------
+#         # Zeichnen der Boundary Box
+#         ht,wt = imgTemplate.shape
+#         bottom_right = (top_left[0] + wt, top_left[1] + ht)
+#         img3=cv2.rectangle(frame.copy(), top_left, bottom_right, (255,0,0), 3)
 
-        #-------------------------
-        # Zeichnen der Boundary Box
-        ht,wt = imgTemplate.shape
-        bottom_right = (top_left[0] + wt, top_left[1] + ht)
-        img3=cv2.rectangle(frame.copy(), top_left, bottom_right, (255,0,0), 3)
+#         # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
+#         _, x = cv2.imencode(".jpeg", img3)
+#         x_bytes = x.tobytes()
 
-        # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
-        _, x = cv2.imencode(".jpeg", img3)
-        x_bytes = x.tobytes()
-
-        yield (
-            b"--frame\r\n" + b"Content-Type: image/jpeg\r\n\r\n" + x_bytes + b"\r\n\r\n"
-        )
+#         yield (
+#             b"--frame\r\n" + b"Content-Type: image/jpeg\r\n\r\n" + x_bytes + b"\r\n\r\n"
+#         )
 
 # Anlegen eines Endpunkte für einen Videostream /video_feed
 # Dieser Endpunkt ist in der App ebenfalls erreichbar.
 @server.route("/video_feed")
 def video_feed():
     return Response(
-        generate_camera_image(my_camera),
+        result = fpd.camcar.stream() ,
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -94,6 +94,7 @@ app.layout = html.Div(
                          {'label': 'Fahrparcours 3 - Vorwärtsfahrt bis Hindernis', 'value': '3'},
                          {'label': 'Fahrparcours 4 - Erkundungstour', 'value': '4'},
                          {'label': 'Fahrparcours 5 - Linienverfolgung', 'value': '5'},
+                         {'label': 'Fahrparcours 6 - Kamerafahrt', 'value': '6'},
                      ],
                      value='1'),
             ], align='center'),
@@ -165,6 +166,9 @@ def start_fahrparcours(start_button, stop_button, value):
         elif value == "5": 
             fpd.fahrparcours_5()
             return "Fahrparcours 5 beendet"
+        elif value == "6": 
+            fpd.fahrparcours_6()
+            return "Fahrparcours 6 beendet"
     elif button_id == "stop_button":
         fpd.stop()
         return "Programm abgebrochen!"

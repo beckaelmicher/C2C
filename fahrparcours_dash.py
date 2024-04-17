@@ -11,6 +11,7 @@ Methoden:
     - fahrparcours_5():             Erweiterte Linienverfolgung mit Hinderniserkennung
 """
 from ir_car import *
+from camcar import *
 from datetime import datetime as dt
 import time
 import pandas as pd
@@ -22,6 +23,7 @@ import json
 bc = BaseCar()  # Fahrparcours 1 und 2
 sc = SonicCar() # Fahrparcours 3 und 4
 irc = IRCar()   # Fahrparcours 5 (bis 7)
+camcar = CamCar() # Fahrparcours 6
 
 # Anlegen der Listen und globalen Variablen, damit sie in den Methoden verwendbar sind
 list_timestamp = []
@@ -221,6 +223,8 @@ def fahrparcours_5():
         # print("--"*20)
         # print("IR-Werte: ", ls)
 
+        
+
         # Ermittlung des Minimalwerts und des zugehörigen List-Indexes (für den einzelnen Sensor)
         min_val = ls[0]
         min_val_idx = 0
@@ -338,5 +342,41 @@ def fahrparcours_5():
                 recording_panda_lists(irc)
     irc.stop()
     recording_panda_lists(irc)
+    list_2_csv() 
+    fahren = False  
+
+def fahrparcours_6():
+    """Funktion zum Ausführen von Fahrparcours 6
+    """
+    global fahren 
+    fahren = True
+    # Einlesen eines individuellen Schwellwertes aus config-Datei
+    try:
+        with open("config.json", "r") as f:
+            data = json.load(f)
+    except:
+        print("Keine geeignete Datei config.json gefunden!")
+
+    black_line = True
+    # Fahrfunktion ausführen so lange wie eine schwarze Linie erkannt wird
+    while black_line and fahren:
+ 
+        # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
+        global abstand
+        abstand = camcar.abstand
+        # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
+        if abstand < 15 and abstand > 0:            
+            #print("Hindernis erkannt - halte an!")
+            camcar.stop()
+            recording_panda_lists(camcar)
+            # Bei erkanntem Hindernis anhalten und While-Schleife verlassen 
+            break
+        # Fahrprogramm zum Folgen der schwarzen Linie
+        else:
+            camcar.drive(30, 1)
+            recording_panda_lists(camcar)
+            
+    camcar.stop()
+    recording_panda_lists(camcar)
     list_2_csv() 
     fahren = False  
