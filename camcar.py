@@ -17,7 +17,7 @@ class CamCar(IRCar):
         # canny = cv2.Canny(gray, 100, 200)
         frame = gray
         frame = frame[150:350,0:640].copy()
-        imgTemplate = frame[100:170,50:570].copy()
+        imgTemplate = frame[100:170,50:540].copy()
         while True:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             frame = self.camera.get_frame()
@@ -40,29 +40,18 @@ class CamCar(IRCar):
             _, x = cv2.imencode(".jpeg", img3)
             x_bytes = x.tobytes()
 
-            # if min_val_idx == 0:
-            #     irc.steering_angle = 45
-            # elif min_val_idx == 4:
-            #     irc.steering_angle = 135
-            # # wird die Linie durch einen der beiden inneren Sensoren erkannt, wird nur leicht gelenkt        
-            # elif min_val_idx == 1:
-            #     irc.steering_angle = 68
-            # elif min_val_idx == 3:
-            #     irc.steering_angle = 112
-            # # wird die Linie durch den mittleren Sensor ekannt, wird geradeaus gelenkt
-            # else:
-            #     irc.steering_angle = 90
 
-            if x_position < 25: 
-                self.steering_angle = 45
-            elif x_position > 75:
-                self.steering_angle = 135
-            elif x_position < 37: 
-                self.steering_angle = 68
-            elif x_position > 62:
-                self.steering_angle = 112
-            else:
-                self.steering_angle = 90
+            self.steering_angle = 0.9 * x_position + 45
+            # if x_position < 25: 
+            #     self.steering_angle = 45
+            # elif x_position > 75:
+            #     self.steering_angle = 135
+            # elif x_position < 37: 
+            #     self.steering_angle = 68
+            # elif x_position > 62:
+            #     self.steering_angle = 112
+            # else:
+            #     self.steering_angle = 90
             
 
             yield (
