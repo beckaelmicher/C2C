@@ -357,9 +357,8 @@ def fahrparcours_6():
     except:
         print("Keine geeignete Datei config.json gefunden!")
 
-    black_line = True
     # Fahrfunktion ausführen so lange wie eine schwarze Linie erkannt wird
-    while black_line and fahren:
+    while fahren:
  
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
         global abstand

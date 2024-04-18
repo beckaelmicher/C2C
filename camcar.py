@@ -1,6 +1,7 @@
 from ir_car import * 
 from basisklassen_cam import Camera
 import cv2
+from fahrparcours_dash import *
 
 class CamCar(IRCar):
     
@@ -18,7 +19,7 @@ class CamCar(IRCar):
         frame = gray
         frame = frame[150:350,0:640].copy()
         imgTemplate = frame[100:170,50:540].copy()
-        while True:
+        while fahren:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             frame = self.camera.get_frame()
             # Einige beipielhafte Manipulationen des Bildes
