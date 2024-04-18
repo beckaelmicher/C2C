@@ -15,17 +15,21 @@ class CamCar(IRCar):
         frame = self.camera.get_frame()
         # Einige beipielhafte Manipulationen des Bildes
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame = cv2.normalize(frame, frame, alpha=2, norm_type=cv2.NORM_MINMAX)
+        frame = cv2.blur(frame, (5,5))
+        frame = cv2.Canny(frame, 0, 100)
+        frame = cv2.normalize(frame, frame, alpha=5, norm_type=cv2.NORM_MINMAX)
         # canny = cv2.Canny(gray, 100, 200)
         frame = frame[150:350,0:640].copy()
-        imgTemplate = frame[100:170,50:540].copy()
+        imgTemplate = frame[100:170,50:590].copy()
 
         while True:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             frame = self.camera.get_frame()
             # Einige beipielhafte Manipulationen des Bildes
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            frame = cv2.normalize(frame, frame, alpha=2, norm_type=cv2.NORM_MINMAX)
+            frame = cv2.blur(frame, (5,5))
+            frame = cv2.Canny(frame, 0, 100)
+            frame = cv2.normalize(frame, frame, alpha=5, norm_type=cv2.NORM_MINMAX)
             # canny = cv2.Canny(gray, 100, 200)
             frame = frame[200:480,0:640].copy()
             res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
@@ -42,7 +46,7 @@ class CamCar(IRCar):
             _, x = cv2.imencode(".jpeg", img3)
             x_bytes = x.tobytes()
 
-            
+
             self.steering_angle = 0.9 * x_position + 45
             # if x_position < 25: 
             #     self.steering_angle = 45
