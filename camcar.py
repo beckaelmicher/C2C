@@ -1,8 +1,8 @@
 from ir_car import * 
 from basisklassen_cam import Camera
 import cv2
-#from fahrparcours_dash import *
 import Beispiele.image_processing as ip
+import matplotlib.pylab as plt
 
 class CamCar(IRCar):
     
@@ -11,62 +11,60 @@ class CamCar(IRCar):
     def __init__(self) -> None:
         super().__init__()
         self.x_position = 0
+        self.imgTemplate = 0
 
    
     def stream(self):
-        
         # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
-        frame = self.camera.get_frame()
-        # Einige beipielhafte Manipulationen des Bildes
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame = cv2.blur(frame, (5,5))
-        #frame = cv2.Canny(frame, 0, 100)
-        #frame = cv2.normalize(frame, frame, alpha=5, norm_type=cv2.NORM_MINMAX)
-        frame = ip.roi(frame, upper=0.6, under=0.2)
-        # canny = cv2.Canny(gray, 100, 200)
-        #frame = frame[150:350,0:640].copy()
-        imgTemplate = frame[150:250,50:590].copy()
+        # frame = self.camera.get_frame()
+        # # Einige beipielhafte Manipulationen des Bildes
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # frame = cv2.blur(frame, (5,5))
+        # frame = ip.roi(frame, upper=0.6, under=0.2)
+
+        # Lesen der Template-Bilder als Array in self.imgTemplate
+        #self.imgTemplate = frame[150:250,50:590].copy()
+        bilder_liste = ['images/Gerade.png', 'images/Linkskurve.png', 'images/Rechtskurve.png']
+        template_liste = []
+        for i in range(len(bilder_liste)):
+            template_liste.append(cv2.imread(bilder_liste[i]))
 
         while True:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             frame = self.camera.get_frame()
-            # Einige beipielhafte Manipulationen des Bildes
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            frame = cv2.blur(frame, (5,5))
-            #frame = cv2.Canny(frame, 0, 100)
-            #frame = cv2.normalize(frame, frame, alpha=5, norm_type=cv2.NORM_MINMAX)
-            frame = ip.roi(frame, upper=0.6, under=0.2)
-            # canny = cv2.Canny(gray, 100, 200)
-            #frame = frame[200:480,0:640].copy()
-            res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
-            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-            top_left = min_loc
-            self.x_position = top_left[0]
-            #-------------------------
-            # Zeichnen der Boundary Box
-            ht,wt = imgTemplate.shape
-            bottom_right = (top_left[0] + wt, top_left[1] + ht)
-            img3=cv2.rectangle(frame.copy(), top_left, bottom_right, (255,0,0), 3)
+
+            img3 = self.quality_check(frame, template_liste)
 
             # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
             _, x = cv2.imencode(".jpeg", img3)
             x_bytes = x.tobytes()
 
-            #if kamerafahrt == True:
-            #    self.steering_angle = 0.9 * x_position + 45
-
-            # if x_position < 25: 
-            #     self.steering_angle = 45
-            # elif x_position > 75:
-            #     self.steering_angle = 135
-            # elif x_position < 37: 
-            #     self.steering_angle = 68
-            # elif x_position > 62:
-            #     self.steering_angle = 112
-            # else:
-            #     self.steering_angle = 90
-            
-
             yield (
                 b"--frame\r\n" + b"Content-Type: image/jpeg\r\n\r\n" + x_bytes + b"\r\n\r\n"
             )
+    
+    def quality_check(self, frame, temp_liste):
+        # Einige beipielhafte Manipulationen des Bildes
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame = cv2.blur(frame, (5,5))
+        frame = ip.roi(frame, upper=0.6, under=0.2)
+        # for-Schleife im Template-Bild-Array zur Prüfung des geringsten min_val mit merken des min_val_index
+        temp_min_val = 1000000
+        temp_min_loc = (50, 200)
+        for bild in temp_liste:
+            bild = cv2.cvtColor(bild, cv2.COLOR_BGR2GRAY)
+            res = cv2.matchTemplate(frame, bild, cv2.TM_SQDIFF) 
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+            if min_val < temp_min_val:
+                temp_min_val = min_val
+                temp_min_loc = min_loc
+            
+        # Mittels min_val_index Bestimmung des min_loc
+        top_left = temp_min_loc
+        self.x_position = top_left[0]
+        #-------------------------
+        # Zeichnen der Boundary Box
+        ht,wt = bild.shape
+        bottom_right = (top_left[0] + wt, top_left[1] + ht)
+        image=cv2.rectangle(frame.copy(), top_left, bottom_right, (255,0,0), 3)
+        return image

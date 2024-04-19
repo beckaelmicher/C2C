@@ -370,9 +370,7 @@ def fahrparcours_6():
             recording_panda_lists(camcar)
             # Bei erkanntem Hindernis anhalten und While-Schleife verlassen 
             break
-        # Fahrprogramm zum Folgen der schwarzen Linie
         else:
-            print("X_position:", camcar.x_position)
             camcar.steering_angle = 0.9 * camcar.x_position + 45
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
