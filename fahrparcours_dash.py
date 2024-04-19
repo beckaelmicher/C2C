@@ -359,7 +359,7 @@ def fahrparcours_6():
 
     # Fahrfunktion ausführen so lange wie eine schwarze Linie erkannt wird
     while fahren:
- 
+        
         # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
         global abstand
         abstand = camcar.abstand
@@ -372,9 +372,11 @@ def fahrparcours_6():
             break
         # Fahrprogramm zum Folgen der schwarzen Linie
         else:
+            print("X_position:", camcar.x_position)
+            camcar.steering_angle = 0.9 * camcar.x_position + 45
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
-            
+
     camcar.stop()
     recording_panda_lists(camcar)
     list_2_csv() 

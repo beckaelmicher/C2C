@@ -10,8 +10,11 @@ class CamCar(IRCar):
 
     def __init__(self) -> None:
         super().__init__()
+        self.x_position = 0
+
    
     def stream(self):
+        
         # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
         frame = self.camera.get_frame()
         # Einige beipielhafte Manipulationen des Bildes
@@ -38,7 +41,7 @@ class CamCar(IRCar):
             res = cv2.matchTemplate(frame, imgTemplate,cv2.TM_SQDIFF) 
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
             top_left = min_loc
-            x_position = top_left[0]
+            self.x_position = top_left[0]
             #-------------------------
             # Zeichnen der Boundary Box
             ht,wt = imgTemplate.shape
@@ -49,8 +52,9 @@ class CamCar(IRCar):
             _, x = cv2.imencode(".jpeg", img3)
             x_bytes = x.tobytes()
 
+            #if kamerafahrt == True:
+            #    self.steering_angle = 0.9 * x_position + 45
 
-            self.steering_angle = 0.9 * x_position + 45
             # if x_position < 25: 
             #     self.steering_angle = 45
             # elif x_position > 75:
