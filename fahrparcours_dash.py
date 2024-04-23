@@ -17,7 +17,7 @@ import time
 import pandas as pd
 import random
 import json
-
+import tensorflow as tf
 
 # Anlegen der benötigten Instanzen
 bc = BaseCar()  # Fahrparcours 1 und 2
@@ -372,6 +372,56 @@ def fahrparcours_6():
             break
         else:
             camcar.steering_angle = 0.9 * camcar.x_position + 45
+            camcar.drive(30, 1)
+            recording_panda_lists(camcar)
+
+    camcar.stop()
+    recording_panda_lists(camcar)
+    list_2_csv() 
+    fahren = False  
+
+def fahrparcours_7():
+    """Funktion zum Ausführen von Fahrparcours 6
+    """
+    global fahren 
+    fahren = True
+
+    # Einlesen eines individuellen Schwellwertes aus config-Datei
+    try:
+        with open("config.json", "r") as f:
+            data = json.load(f)
+    except:
+        print("Keine geeignete Datei config.json gefunden!")
+
+    # Modell laden
+    # Laden eines Modells
+    path_to_model_file = './model/DEMO_MODEL'
+    model_loaded = tf.keras.models.load_model(path_to_model_file)
+
+    # Fahrfunktion ausführen so lange wie eine schwarze Linie erkannt wird
+    while fahren:
+        
+        # Speichern des aktuellen Abstands zur Verwendung beim Stoppen und beim Loggen
+        global abstand
+        abstand = camcar.abstand
+        # Bei Prüfung des Abstands, Ausschluss möglicher negativer Fehlercodes (<0)
+        if abstand < 15 and abstand > 0:            
+            #print("Hindernis erkannt - halte an!")
+            camcar.stop()
+            recording_panda_lists(camcar)
+            # Bei erkanntem Hindernis anhalten und While-Schleife verlassen 
+            break
+        else:
+            # Kamera-Bild in Modell -> Vorhersage Lenkwinkel
+            img = camcar.camera.get_frame()
+            dim = (64,48)
+            interpolation = cv2.INTER_AREA
+            img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
+            img = cv2.resize(img,dim,interpolation) #  Anpassung der Bildgröße
+            img = img[20:40] # Ausschneiden eines Teilbildes
+            
+            xe = np.array(img)
+            camcar.steering_angle = model_loaded.predict(xe)
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
 

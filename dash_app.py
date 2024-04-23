@@ -56,6 +56,7 @@ app.layout = html.Div(
                          {'label': 'Fahrparcours 4 - Erkundungstour', 'value': '4'},
                          {'label': 'Fahrparcours 5 - Linienverfolgung', 'value': '5'},
                          {'label': 'Fahrparcours 6 - Kamerafahrt', 'value': '6'},
+                         {'label': 'Fahrparcours 7 - Kamerafahrt-NN', 'value': '7'},
                      ],
                      value='1'),
             ], align='center'),
@@ -130,6 +131,9 @@ def start_fahrparcours(start_button, stop_button, value):
         elif value == "6": 
             fpd.fahrparcours_6()
             return "Fahrparcours 6 beendet"
+        elif value == "7": 
+            fpd.fahrparcours_7()
+            return "Fahrparcours 7 beendet"
     elif button_id == "stop_button":
         fpd.stop()
         return "Programm abgebrochen!"
