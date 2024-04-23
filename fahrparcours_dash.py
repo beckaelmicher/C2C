@@ -421,7 +421,10 @@ def fahrparcours_7():
             img = img[20:40] # Ausschneiden eines Teilbildes
             
             xe = np.array(img)
-            camcar.steering_angle = model_loaded.predict(xe)
+            temp_steering_angle = model_loaded(xe).numpy()
+            print("temp_steering_angle", temp_steering_angle)
+            print("temp_steering_angle[0]", temp_steering_angle[0])
+            camcar.steering_angle = temp_steering_angle[0]
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
 
