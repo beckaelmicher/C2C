@@ -424,8 +424,8 @@ def fahrparcours_7():
 
             temp_steering_angle = model_loaded(xe).numpy()
             print("temp_steering_angle", temp_steering_angle)
-            print("temp_steering_angle[0]", temp_steering_angle[0])
-            camcar.steering_angle = temp_steering_angle[0]
+            print("temp_steering_angle[0][0]", temp_steering_angle[0][0])
+            camcar.steering_angle = int(temp_steering_angle[0][0])
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
 
