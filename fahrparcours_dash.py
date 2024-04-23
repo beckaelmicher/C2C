@@ -419,8 +419,9 @@ def fahrparcours_7():
             img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
             img = cv2.resize(img,dim,interpolation) #  Anpassung der Bildgröße
             img = img[20:40] # Ausschneiden eines Teilbildes
-            
-            xe = np.array(img)
+            h,w = img.shape
+            xe = img.reshape((1,h,w,1))
+
             temp_steering_angle = model_loaded(xe).numpy()
             print("temp_steering_angle", temp_steering_angle)
             print("temp_steering_angle[0]", temp_steering_angle[0])
