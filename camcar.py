@@ -24,7 +24,8 @@ class CamCar(IRCar):
 
         # Lesen der Template-Bilder als Array in self.imgTemplate
         #self.imgTemplate = frame[150:250,50:590].copy()
-        bilder_liste = ['images/Gerade.png', 'images/Linkskurve.png', 'images/Rechtskurve.png']
+        bilder_liste = []
+        #bilder_liste = ['images/Gerade.png', 'images/Linkskurve.png', 'images/Rechtskurve.png']
         template_liste = []
         for i in range(len(bilder_liste)):
             template_liste.append(cv2.imread(bilder_liste[i]))
@@ -33,10 +34,10 @@ class CamCar(IRCar):
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             frame = self.camera.get_frame()
 
-            img3 = self.quality_check(frame, template_liste)
+            #img3 = self.quality_check(frame, template_liste)
 
             # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
-            _, x = cv2.imencode(".jpeg", img3)
+            _, x = cv2.imencode(".jpeg", frame)
             x_bytes = x.tobytes()
 
             yield (
