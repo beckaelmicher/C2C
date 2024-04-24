@@ -4,6 +4,8 @@ messergebnisse.csv
 fahrparcours_pf.py
 test_*.py
 *.jpg
+model/
+cnn_ed.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
