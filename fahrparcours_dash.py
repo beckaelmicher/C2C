@@ -39,7 +39,7 @@ mess_ergebnis = 0
 abstand = 0
 # Variable "fahren" wird verwendet, um Fahrparcours zwischendrin unterbrechen zu können.
 fahren = False
-path_to_model_file = './model/MODEL_eigeneBilder.h5'
+path_to_model_file = './model/MODEL_all.h5'
 model_loaded = tf.keras.models.load_model(path_to_model_file)
 
 
@@ -385,7 +385,6 @@ def fahrparcours_6():
 
 def fahrparcours_7():
     """Funktion zum Ausführen von Fahrparcours 7
-    """Funktion zum Ausführen von Fahrparcours 7
     """
     global fahren 
     fahren = True
@@ -420,6 +419,8 @@ def fahrparcours_7():
             img = img[20:40] # Ausschneiden eines Teilbildes
             h,w = img.shape
             xe = img.reshape((1,h,w,1))
+            ab = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+            camcar.analyse_bild = cv2.resize(ab, (256, 80), interpolation) 
 
             temp_steering_angle = model_loaded(xe).numpy()
             steering_angle = int(temp_steering_angle[0][0])
