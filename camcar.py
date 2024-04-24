@@ -7,17 +7,18 @@ import matplotlib.pylab as plt
 class CamCar(IRCar):
     
     camera = Camera(flip=True, height=480, width=640)
+    frame = []
 
     def __init__(self) -> None:
         super().__init__()
         self.x_position = 0
         self.imgTemplate = 0
+        self.frame = 0
 
    
     def stream(self):
         # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
-        # frame = self.camera.get_frame()
-        # # Einige beipielhafte Manipulationen des Bildes
+        # Einige beipielhafte Manipulationen des Bildes
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # frame = cv2.blur(frame, (5,5))
         # frame = ip.roi(frame, upper=0.6, under=0.2)
@@ -32,18 +33,19 @@ class CamCar(IRCar):
 
         while True:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
-            frame = self.camera.get_frame()
+            self.frame = self.camera.get_frame()
 
             #img3 = self.quality_check(frame, template_liste)
 
             # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
-            _, x = cv2.imencode(".jpeg", frame)
+            _, x = cv2.imencode(".jpeg", self.frame)
             x_bytes = x.tobytes()
 
             yield (
                 b"--frame\r\n" + b"Content-Type: image/jpeg\r\n\r\n" + x_bytes + b"\r\n\r\n"
             )
-    
+    # War eingefügt für Idee von Fahrparcours 6 mit Bilder Gerade, Links, Rechts.
+    # ---------------------------------------------------------------------------
     def quality_check(self, frame, temp_liste):
         # Einige beipielhafte Manipulationen des Bildes
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
