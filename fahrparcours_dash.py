@@ -381,7 +381,7 @@ def fahrparcours_6():
     fahren = False  
 
 def fahrparcours_7():
-    """Funktion zum Ausführen von Fahrparcours 6
+    """Funktion zum Ausführen von Fahrparcours 7
     """
     global fahren 
     fahren = True
@@ -413,19 +413,21 @@ def fahrparcours_7():
             break
         else:
             # Kamera-Bild in Modell -> Vorhersage Lenkwinkel
-            img = camcar.camera.get_frame()
+            # img = camcar.camera.get_frame()
+            img = camcar.frame
+            print(img.shape, " ", type(img))
             dim = (64,48)
             interpolation = cv2.INTER_AREA
-            img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
-            img = cv2.resize(img,dim,interpolation) #  Anpassung der Bildgröße
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
+            img = cv2.resize(img, dim, interpolation) #  Anpassung der Bildgröße
             img = img[20:40] # Ausschneiden eines Teilbildes
             h,w = img.shape
             xe = img.reshape((1,h,w,1))
 
             temp_steering_angle = model_loaded(xe).numpy()
             print("temp_steering_angle", temp_steering_angle)
-            print("temp_steering_angle[0]", temp_steering_angle[0])
-            camcar.steering_angle = temp_steering_angle[0]
+            print("temp_steering_angle[0][0] als int", int(temp_steering_angle[0][0]))
+            camcar.steering_angle = int(temp_steering_angle[0][0])
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
 
