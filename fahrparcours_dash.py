@@ -419,6 +419,8 @@ def fahrparcours_7():
             img = img[20:40] # Ausschneiden eines Teilbildes
             h,w = img.shape
             xe = img.reshape((1,h,w,1))
+            ab = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+            camcar.analyse_bild = cv2.resize(ab, (256, 80), interpolation) 
 
             temp_steering_angle = model_loaded(xe).numpy()
             steering_angle = int(temp_steering_angle[0][0])

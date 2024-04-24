@@ -14,6 +14,7 @@ class CamCar(IRCar):
         self.x_position = 0
         self.imgTemplate = 0
         self.frame = 0
+        self.analyse_bild = 0
 
    
     def stream(self):
@@ -34,7 +35,7 @@ class CamCar(IRCar):
         while True:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             self.frame = self.camera.get_frame()
-
+            self.frame[400:480,0:256]=self.analyse_bild 
             #img3 = self.quality_check(frame, template_liste)
 
             # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
