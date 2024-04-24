@@ -93,4 +93,4 @@ def get_ip():
 if __name__ == "__main__":
 
     ipaddress = get_ip()
-    app.run_server(host=ipaddress, debug=True, port=8080)
+    app.run_server(host=ipaddress, debug=False, port=8080)

@@ -385,6 +385,7 @@ def fahrparcours_6():
 
 def fahrparcours_7():
     """Funktion zum Ausführen von Fahrparcours 7
+    """Funktion zum Ausführen von Fahrparcours 7
     """
     global fahren 
     fahren = True
@@ -414,8 +415,8 @@ def fahrparcours_7():
             img = camcar.frame
             dim = (64,48)
             interpolation = cv2.INTER_AREA
-            img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
-            img = cv2.resize(img,dim,interpolation) #  Anpassung der Bildgröße
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
+            img = cv2.resize(img, dim, interpolation) #  Anpassung der Bildgröße
             img = img[20:40] # Ausschneiden eines Teilbildes
             h,w = img.shape
             xe = img.reshape((1,h,w,1))
