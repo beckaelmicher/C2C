@@ -39,7 +39,7 @@ mess_ergebnis = 0
 abstand = 0
 # Variable "fahren" wird verwendet, um Fahrparcours zwischendrin unterbrechen zu können.
 fahren = False
-path_to_model_file = './model/MODEL_eigeneBilder.h5'
+path_to_model_file = './model/MODEL_pascal_all_pics.h5'
 model_loaded = tf.keras.models.load_model(path_to_model_file)
 
 
@@ -384,7 +384,6 @@ def fahrparcours_6():
     fahren = False  
 
 def fahrparcours_7():
-    """Funktion zum Ausführen von Fahrparcours 7
     """Funktion zum Ausführen von Fahrparcours 7
     """
     global fahren 
