@@ -23,7 +23,7 @@ import tensorflow as tf
 bc = BaseCar()  # Fahrparcours 1 und 2
 sc = SonicCar() # Fahrparcours 3 und 4
 irc = IRCar()   # Fahrparcours 5 (bis 7)
-camcar = CamCar() # Fahrparcours 6
+camcar = CamCar() # Fahrparcours 6 und 7
 
 # Anlegen der Listen und globalen Variablen, damit sie in den Methoden verwendbar sind
 list_timestamp = []
@@ -39,6 +39,9 @@ mess_ergebnis = 0
 abstand = 0
 # Variable "fahren" wird verwendet, um Fahrparcours zwischendrin unterbrechen zu können.
 fahren = False
+path_to_model_file = './model/MODEL_eigeneBilder.h5'
+model_loaded = tf.keras.models.load_model(path_to_model_file)
+
 
 def recording_panda_lists(car):
     """Funktion zum Anhängen der Messdaten in den Listen
@@ -382,6 +385,7 @@ def fahrparcours_6():
 
 def fahrparcours_7():
     """Funktion zum Ausführen von Fahrparcours 7
+    """Funktion zum Ausführen von Fahrparcours 7
     """
     global fahren 
     fahren = True
@@ -392,11 +396,6 @@ def fahrparcours_7():
             data = json.load(f)
     except:
         print("Keine geeignete Datei config.json gefunden!")
-
-    # Modell laden
-    # Laden eines Modells
-    path_to_model_file = './model/DEMO_MODEL'
-    model_loaded = tf.keras.models.load_model(path_to_model_file)
 
     # Fahrfunktion ausführen so lange wie eine schwarze Linie erkannt wird
     while fahren:
@@ -413,9 +412,7 @@ def fahrparcours_7():
             break
         else:
             # Kamera-Bild in Modell -> Vorhersage Lenkwinkel
-            # img = camcar.camera.get_frame()
             img = camcar.frame
-            print(img.shape, " ", type(img))
             dim = (64,48)
             interpolation = cv2.INTER_AREA
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Verwendung von Graustufenbildern
@@ -425,13 +422,13 @@ def fahrparcours_7():
             xe = img.reshape((1,h,w,1))
 
             temp_steering_angle = model_loaded(xe).numpy()
-            print("temp_steering_angle", temp_steering_angle)
-            print("temp_steering_angle[0][0] als int", int(temp_steering_angle[0][0]))
-            camcar.steering_angle = int(temp_steering_angle[0][0])
+            steering_angle = int(temp_steering_angle[0][0])
+            print("Lenkwinkel: ", steering_angle)
+            camcar.steering_angle = steering_angle
             camcar.drive(30, 1)
             recording_panda_lists(camcar)
 
     camcar.stop()
     recording_panda_lists(camcar)
     list_2_csv() 
-    fahren = False  
+    fahren = False
