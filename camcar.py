@@ -15,6 +15,7 @@ class CamCar(IRCar):
         self.imgTemplate = 0
         self.frame = 0
         self.analyse_bild = 0
+        self.lenkwinkel_text = ""
 
    
     def stream(self):
@@ -35,8 +36,11 @@ class CamCar(IRCar):
         while True:
             # Kamera-Objekt liefert aktuelles Bild als Numpy-Array
             self.frame = self.camera.get_frame()
-            self.frame[400:480,0:256]=self.analyse_bild 
-            #img3 = self.quality_check(frame, template_liste)
+            self.frame[400:480,0:256]=self.analyse_bild
+            
+            # Anzeige Lenkwinkel im Live-Bild
+            text = "LW: {:.0f}".format(self.steering_angle)
+            self.frame = cv2.putText(self.frame, text, (280, 430), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2) 
 
             # Erstellen des Bytecode für das Bild/Videostream aus dem aktuellen Frame als NumPy-Array
             _, x = cv2.imencode(".jpg", self.frame)
